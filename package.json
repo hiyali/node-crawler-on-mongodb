@@ -1,0 +1,32 @@
+{
+  "name": "crawler",
+  "version": "0.0.1",
+  "description": "A crawler repo for hunt ticket.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "./node_modules/babel-cli/bin/babel-node.js ./src/index.js",
+    "dev": "./node_modules/phantomjs-prebuilt/bin/phantomjs src/phantom.js",
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://salam@git.liepiaowang.com:81/salam/ticket-crawler.git"
+  },
+  "keywords": [
+    "hunt",
+    "ticket",
+    "crawler",
+    "node",
+    "mongodb"
+  ],
+  "author": "Salam Hiyali",
+  "license": "MIT",
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.14"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
