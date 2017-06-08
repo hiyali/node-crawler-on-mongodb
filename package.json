@@ -4,8 +4,9 @@
   "description": "A crawler repo for hunt ticket.",
   "main": "src/index.js",
   "scripts": {
+    "dev": "./node_modules/babel-cli/bin/babel-node.js ./src/index.js --dev",
+    "example": "./node_modules/phantomjs-prebuilt/bin/phantomjs ./src/targets/example.back.js",
     "start": "./node_modules/babel-cli/bin/babel-node.js ./src/index.js",
-    "dev": "./node_modules/phantomjs-prebuilt/bin/phantomjs src/phantom.js",
     "test": "npm run test"
   },
   "repository": {
@@ -22,7 +23,9 @@
   "author": "Salam Hiyali",
   "license": "MIT",
   "dependencies": {
-    "phantomjs-prebuilt": "^2.1.14"
+    "mongodb": "^2.2.28",
+    "phantomjs-prebuilt": "^2.1.14",
+    "restify": "^4.3.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

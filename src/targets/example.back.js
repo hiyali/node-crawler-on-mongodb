@@ -1,32 +1,45 @@
-const page = require('webpage').create()
 const system = require('system')
+const webpage = require('webpage')
 
-if (system.args.length === 1) {
-  console.log('Not given <URL>')
-  phantom.exit()
-}
+const page = webpage.create()
+const url = 'https://www.so.com'
 
-const url = system.args[1]
-
-Log = function (text) {
+const Log = function (text) {
   const _D = new Date()
   const date = _D.getFullYear() + '/' + (_D.getMonth() + 1) + '/' + _D.getDate()
   const time = _D.getHours() + ':' + _D.getMinutes() + ':' + _D.getSeconds()
   const now = date + ' ' + time
   console.log(now, '      ', text)
 }
+var globalArg = null
+
+if (system.args.length === 2) {
+  globalArg = system.args[1]
+  Log('global arg' + globalArg)
+}
+
 // page.onConsoleMessage = function (msg, lineNum, sourceId) {}
 
-page.onLoadFinished = function(status) {
-  page.evaluate(function() {
+page.onLoadFinished = function (status) {
+  const Log = function (text) {
+    const _D = new Date()
+    const date = _D.getFullYear() + '/' + (_D.getMonth() + 1) + '/' + _D.getDate()
+    const time = _D.getHours() + ':' + _D.getMinutes() + ':' + _D.getSeconds()
+    const now = date + ' ' + time
+    console.log(now, '      ', text)
+  }
+
+  Log('Start inputing and clicking')
+  page.evaluate(function () {
     // input & click
     document.getElementById("input").value = "salam"
     document.getElementById("search-button").click()
     // page is redirecting.
   })
 
-  page.onLoadFinished = function(status) {
+  page.onLoadFinished = function (status) {
     // get Result
+    Log('Starts to getting result')
     const result = page.evaluate(function () {
       const resultItems = document.getElementsByClassName("res-list")
       if (resultItems && resultItems.length > 0) {
@@ -36,17 +49,21 @@ page.onLoadFinished = function(status) {
     })
     Log(result)
 
+    /*
     // Screenshot
-    const path = "screenshot"
+    const shotDir = "screenshot/"
     const fileName = (new Date()).getTime()  + ".png"
-    const file = path + "/" + fileName
-    // page.render(file)
+    const file = shotDir + fileName
+    page.render(file)
     Log('Screenshot saved: ' + file)
+    // */
 
     // exit
     phantom.exit()
   }
 }
+
+Log('Start opening: ' + url)
 page.open(url, function (status) {
-  Log('Open in:' + url)
+  Log('Status: ' + status)
 })
