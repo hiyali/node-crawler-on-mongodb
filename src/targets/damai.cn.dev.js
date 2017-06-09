@@ -3,7 +3,7 @@ const fs = require('fs')
 const system = require('system')
 
 const page = webpage.create()
-const url = 'https://www.so.com'
+const url = 'https://search.damai.cn/search.html?order=3'
 
 const Log = function (text) {
   const _D = new Date()
@@ -31,21 +31,28 @@ page.onLoadFinished = function (status) {
     console.log(now, '      ', text)
   }
 
-  Log('Start inputing and clicking')
-  page.evaluate(function () {
-    // input & click
-    document.getElementById("input").value = "salam"
-    document.getElementById("search-button").click()
-    // page is redirecting.
-  })
-
-  page.onLoadFinished = function (status) {
+  page.includeJs('https://cdn.bootcss.com/jquery/1.12.4/jquery.js', function() {
     // get Result
     Log('Starts to getting result')
     const result = page.evaluate(function () {
-      const resultItems = document.getElementsByClassName("res-list")
-      if (resultItems && resultItems.length > 0) {
-        return resultItems[0].innerText
+      const lists = $('#content_list li')
+      console.log('lists.length: ' + lists.length)
+
+      const resultData = []
+      if (lists && lists.length > 0) {
+        $(lists).each(function (index) {
+          const titleEl = $(this).find('h3')
+          if (titleEl.text() && titleEl.text() !== '') {
+            resultData.push({
+              title: titleEl.text(),
+              time: $(this).find('.search_txt_time').text(),
+              location: $(this).find('.search_txt_site_icon').text(),
+              price: $(this).find('em').text(),
+              url: titleEl.find('a').attr('href')
+            })
+          }
+        })
+        return resultData
       }
       return null
     })
@@ -58,18 +65,9 @@ page.onLoadFinished = function (status) {
       Log('Information not enough, url or result is empty')
     }
 
-    /*
-    // Screenshot
-    const shotDir = "screenshot/"
-    const fileName = (new Date()).getTime()  + ".png"
-    const file = shotDir + fileName
-    page.render(file)
-    Log('Screenshot saved: ' + file)
-    // */
-
     // exit
     phantom.exit()
-  }
+  })
 }
 
 Log('Start opening: ' + url)

@@ -92,11 +92,35 @@ const find = function (
   MongoDo(toDo)
 }
 
+const deleteMany = function (
+  query = {},
+  resultCB = () => {},
+  { name } = { name: 'tickets' }
+) {
+  const toDo = (db, doneCB) => {
+    Log('Prepare to delete with query:', JSON.stringify(query), `in ${name}`)
+
+    const collection = db.collection(name)
+    collection.deleteMany(query, { w: 1 }, function(err, result) {
+      test.equal(err, null)
+
+      Log(`Deleted the following ${result.length} records`)
+      // console.dir(result)
+
+      resultCB(result)
+      doneCB(result)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
 export default {
   Client: MongoClient,
   Do: MongoDo,
   insertMany,
   insertOne,
   find,
+  deleteMany,
   version: '0.0.1'
 }

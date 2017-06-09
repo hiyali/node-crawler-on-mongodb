@@ -13,8 +13,25 @@ server.use(restify.plugins.bodyParser())
 
 server.get('/api/tickets', function (req, res, next) {
   MongoDB.find(req.params, (result) => {
+    res.charSet('utf-8')
     res.send(result)
   })
+  return next()
+})
+server.post('/api/tickets', function (req, res, next) {
+  const bodyJson = req.params
+  res.send(bodyJson)
+
+  /*
+  if (bodyJson && bodyJson.hasOwnProperty('length')) {
+    MongoDB.insertMany(req.params, (result) => {
+      res.charSet('utf-8')
+      res.send(result)
+    })
+  } else {
+    res.send('Please send JSON list.')
+  }
+  // */
   return next()
 })
 
