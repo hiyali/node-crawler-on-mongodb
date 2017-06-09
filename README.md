@@ -19,11 +19,15 @@
 ### 启动 Mongodb 服务
 ```shell
 ./src/sh/mongodb_serv.sh
-npm start
 ```
 ### 开始启动爬虫，并监听 5555 端口
+```shell
+npm start
+```
 
+### 现有的 API
 * 读取 GET
+地址： /api/tickets
 ```java
 /api/tickets # 获取所有数据
 /api/tickets?title=重庆&price=48元
@@ -31,15 +35,11 @@ npm start
 
 * 写入 POST
 
-| 名称         | 值                |
+地址： /api/tickets
 
-| ------------ | ----------------- |
+请求头： Content-Type: application/json
 
-| 接口地址     | /api/tickets      |
-
-| Content-Type | application/json  |
-
-| Body         | [{...}, {...}]    |
+请求 Body： [{...}, {...}]
 
 ## 调试说明
 
