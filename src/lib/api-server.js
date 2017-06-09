@@ -20,9 +20,8 @@ server.get('/api/tickets', function (req, res, next) {
 })
 server.post('/api/tickets', function (req, res, next) {
   const bodyJson = req.params
-  res.send(bodyJson)
+  // res.send(bodyJson)
 
-  /*
   if (bodyJson && bodyJson.hasOwnProperty('length')) {
     MongoDB.insertMany(req.params, (result) => {
       res.charSet('utf-8')
