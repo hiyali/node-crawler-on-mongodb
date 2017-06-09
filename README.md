@@ -29,9 +29,10 @@ npm start
 
 * 读取 GET
 
-地址： /api/tickets
+地址： /api/tickets(/:id)?
 ```java
 /api/tickets # 获取所有数据
+/api/tickets/234jfasf0uwef0sadfj # 用ID获取某一项数据
 /api/tickets?title=重庆&price=48元
 ```
 
