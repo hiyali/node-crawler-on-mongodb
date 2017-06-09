@@ -18,6 +18,15 @@ server.get('/api/tickets', function (req, res, next) {
   })
   return next()
 })
+server.get('/api/tickets/:id', function (req, res, next) {
+  const id = req.params.id
+	const ObjectId = MongoDB.ObjectId
+  MongoDB.findOne({ _id: new ObjectId(id) }, (result) => {
+    res.charSet('utf-8')
+    res.send(result)
+  })
+  return next()
+})
 server.post('/api/tickets', function (req, res, next) {
   const bodyJson = req.params
   // res.send(bodyJson)

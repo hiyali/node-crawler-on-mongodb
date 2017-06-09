@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectID } from 'mongodb'
 import test from 'assert'
 
 import { Log } from './index.js'
@@ -92,6 +92,33 @@ const find = function (
   MongoDo(toDo)
 }
 
+const findOne = function (
+  query = {},
+  resultCB = () => {},
+  { name } = { name: 'tickets' }
+) {
+  const toDo = (db, doneCB) => {
+    Log('Prepare to find the query:', JSON.stringify(query), `in ${name}`)
+
+    const collection = db.collection(name)
+    collection.findOne(query, {}, function(err, result) {
+      test.equal(err, null)
+
+			if (result) {
+				Log(`Found ${result.length} record`)
+				// console.dir(result)
+				resultCB(result)
+			} else {
+				Log(`Not found any record`)
+				resultCB({message: "Not found"})
+			}
+			doneCB(result)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
 const deleteMany = function (
   query = {},
   resultCB = () => {},
@@ -117,10 +144,12 @@ const deleteMany = function (
 
 export default {
   Client: MongoClient,
+	ObjectId: ObjectID,
   Do: MongoDo,
   insertMany,
   insertOne,
   find,
+  findOne,
   deleteMany,
   version: '0.0.1'
 }
