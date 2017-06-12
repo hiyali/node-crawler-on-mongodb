@@ -27,41 +27,35 @@ npm start
 
 ### 现有的 API
 
-* 读取 GET
-
-地址： /api/tickets(/:id)?
 ```java
-/api/tickets # 获取所有数据
-/api/tickets/234jfasf0uwef0sadfj # 用ID获取某一项数据
-/api/tickets?title=重庆&price=48元
+/api/tickets # (get) 获取所有数据
+/api/tickets # (post, Content-Type: application/json, []) 保存多个数据
+/api/tickets/:id # (get) 用ID获取对应的数据
+/api/tickets?title=重庆&price=48元 # (get) 查询
+/api/tickets/:id # (delete) 用ID删除对应的记录
+/api/tickets/handled # (put) 全部标记已处理
+/api/tickets/handled/:id # (put) 标记一条数据已处理
 ```
-
-* 写入 POST
-
-地址： /api/tickets
-
-请求头： Content-Type: application/json
-
-请求 Body： [{...}, {...}]
 
 ## 调试说明
 
 爬虫规则文件存储在 src/targets/*
 
 ```shell
-npm run example # 执行 example.back.js 爬虫示例，无写入到数据库的步骤
-npm run dev # 执行 *.dev.js 的爬虫文件
-npm run phantomjs ./src/targets/**.js # 执行某一 ** 爬虫文件
 npm run api # 只有 api 运行
+npm run crawl # 只有 爬虫运行
+npm run custom # 只有 custom.js 运行
+npm run dev # 执行 *.dev.js 的爬虫文件
+npm run example # 执行 example.back.js 爬虫示例，无写入到数据库的步骤
+npm run phantomjs ./src/targets/**.js # 执行某一 ** 爬虫文件
+npm run start # 执行 爬虫 并 运行 api
 ```
 
 ## 已定义的参数
 
-* ./node_modules/babel-cli/bin/babel-node.js ./src/index.js --**
+* ./node_modules/babel-cli/bin/babel-node.js ./src/** --**
 ```shell
 --dont-save-data # 不要把临时文件存到数据库里
---dont-get-targets # 不要获取 target 文件列表
---dont-run-api # 不要启动 api 服务
 --just-get-dev-file # 只取 *.dev.js
 ```
 

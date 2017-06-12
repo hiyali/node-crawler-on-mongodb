@@ -4,12 +4,13 @@
   "description": "A crawler repo for hunt ticket.",
   "main": "src/index.js",
   "scripts": {
+    "api": "./node_modules/babel-cli/bin/babel-node.js ./src/api.js",
+    "crawl": "./node_modules/babel-cli/bin/babel-node.js ./src/crawl.js",
     "custom": "./node_modules/babel-cli/bin/babel-node.js ./src/custom.js",
     "dev": "./node_modules/babel-cli/bin/babel-node.js ./src/index.js --just-get-dev-file",
     "example": "npm run phantomjs ./src/targets/example.back.js --dont-save-data",
     "phantomjs": "./node_modules/phantomjs-prebuilt/bin/phantomjs",
-    "start": "./node_modules/babel-cli/bin/babel-node.js ./src/index.js",
-    "api": "./node_modules/babel-cli/bin/babel-node.js ./src/index.js --dont-get-targets",
+    "start": "npm run crawl && npm run api",
     "test": "echo \"No tests!\"; exit 0 "
   },
   "repository": {

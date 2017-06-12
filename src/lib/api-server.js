@@ -77,11 +77,6 @@ server.del('/api/tickets/:id', function (req, res, next) {
   return next()
 })
 
-server.get('/test/:name', function (req, res, next) {
-  res.send(req.params)
-  return next()
-})
-
 const run = () => {
   server.listen(5555, function () {
     Log(`${server.name} listening at ${server.url}`)

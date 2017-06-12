@@ -3,22 +3,13 @@ import childProc from 'child_process'
 import phantomjs from 'phantomjs-prebuilt'
 import fs from 'fs'
 
-import { Log, GetTargets, MongoDB, ApiServer } from './lib'
+import { Log, GetTargets, MongoDB } from './lib'
 
 const dontSaveData = process.argv.indexOf('--dont-save-data') > -1 ? true : false
-const dontGetTargets = process.argv.indexOf('--dont-get-targets') > -1 ? true : false
-const dontRunApi = process.argv.indexOf('--dont-run-api') > -1 ? true : false
 
 const targetsDir = path.join(__dirname, 'targets')
 const getTempFileAddr = function (targetFileName = '') {
   return path.join(__dirname, '../temp/' + targetFileName + '.result.txt')
-}
-
-
-if (dontRunApi) {
-  Log('Api server not run')
-} else {
-  ApiServer.run()
 }
 
 
@@ -46,11 +37,7 @@ const targetsReady = function (targetsList) {
   queuedTargetsList = targetsList
   next()
 }
-if (dontGetTargets) {
-  Log(`Not get targets`)
-} else {
-  GetTargets(targetsDir, targetsReady)
-}
+GetTargets(targetsDir, targetsReady)
 
 
 const onTargetFinish = (existWith = null, tempFileAddr = null) => {
