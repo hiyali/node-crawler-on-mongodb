@@ -14,18 +14,23 @@
 * Mongo 存储
   * Api 简化
 
+## 依赖
+
+* MongoDB (3.2 +)
+* NodeJS (6.0.0 +)
+
 ## 使用说明
 
-### 启动 Mongodb 服务
+### 1. 启动 Mongodb 服务
 ```shell
 ./src/sh/mongodb_serv.sh
 ```
-### 开始启动爬虫，并监听 5555 端口
+### 2. 开始启动爬虫，并监听 5555 端口
 ```shell
 npm start
 ```
 
-### 现有的 API
+### 3. 现有的 API
 
 ```java
 /api/tickets # (get) 获取所有数据
