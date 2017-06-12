@@ -5,6 +5,7 @@ import fs from 'fs'
 
 import { Log, GetTargets, MongoDB } from './lib'
 
+const dontSaveTemp = true
 const targetsDir = path.join(__dirname, 'targets')
 const getTempFileAddr = function (targetFileName = '') {
   return path.join(__dirname, '../temp/' + targetFileName + '.result.txt')
@@ -14,11 +15,10 @@ const getTempFileAddr = function (targetFileName = '') {
 // MongoDB.find({ salam: 1 }, Log)
 // MongoDB.insertMany([{ "salam": "dawran" }, { "dawran": "alim" }], Log)
 // MongoDB.insertOne({ "phantomjs": "saved to mongodb" }, Log)
-// MongoDB.deleteMany({ "url": { "$exists": false } }, Log) // 删除 url
+// MongoDB.deleteMany({ "url": { "$exists": false } }, Log) // 删除没有 url 字段的记录
 
 let queuedTargetsList = []
 const next = () => {
-  return
   const length = queuedTargetsList.length
   if (length === 0) {
     Log('Queued done!')
@@ -26,9 +26,11 @@ const next = () => {
   }
 
   const fileName = queuedTargetsList.pop()
-  Log(`target no.${length} (${fileName}) prepare run`)
+  Log(`Target no.${length} (${fileName}) prepare run`)
   runTarget(fileName)
 }
+
+
 const targetsReady = function (targetsList) {
   Log('targetsList', targetsList)
   queuedTargetsList = targetsList
@@ -43,19 +45,23 @@ const onTargetFinish = (existWith = null, tempFileAddr = null) => {
   } else {
     Log('Phantomjs exit successfully')
 
-    if (tempFileAddr && fs.existsSync(tempFileAddr)) {
-      fs.readFile(tempFileAddr, 'utf8', (err, result) => {
-        result = JSON.parse(result)
+    if (!tempFileAddr) {
+      Log(`Variable tempFileAddr is not defined`)
+    } else if (dontSaveTemp) {
+      Log(`File ${tempFileAddr} not be saving to DB...`)
+    } else if (fs.existsSync(tempFileAddr)) {
+      fs.readFile(tempFileAddr, 'utf8', (err, tempData) => {
+        tempData = JSON.parse(tempData)
 
-        let data = []
-        if (typeof result === 'object' && result.hasOwnProperty('length')) {
-          data = result
+        if (typeof tempData === 'object' && tempData.hasOwnProperty('length')) {
+          MongoDB.insertMany(tempData, (result) => {
+            Log(result)
+          })
         } else {
-          data = [{ result }]
+          MongoDB.insertOne(tempData, (result) => {
+            Log(result)
+          })
         }
-        MongoDB.insertMany(data, (result) => {
-          Log(result)
-        })
       })
     } else {
       Log(`File ${tempFileAddr} not found!`)
@@ -67,25 +73,7 @@ const onTargetFinish = (existWith = null, tempFileAddr = null) => {
 }
 
 
-
-/* 1.
-const runTarget = (fileName = 'example.back.js') => {
-  const fileAddr = path.join(targetsDir, fileName)
-  const tempFileAddr = getTempFileAddr(fileName)
-  Log('Start run target: ', fileName)
-  const targetProc = phantomjs.exec(fileAddr + ' ' + tempFileAddr)
-
-  targetProc.stdout.pipe(process.stdout)
-  targetProc.stderr.pipe(process.stderr)
-
-  targetProc.on('exit', code => {
-    onTargetFinish(code, tempFileAddr)
-  })
-}
-// */
-
-
-//* 2.
+//* 1.
 const runTarget = (fileName = 'example.back.js') => {
   const binPath = phantomjs.path
   const tempFileAddr = getTempFileAddr(fileName)
@@ -99,6 +87,24 @@ const runTarget = (fileName = 'example.back.js') => {
     Log('StdErr: ', stderr)
 
     onTargetFinish(err, tempFileAddr)
+  })
+}
+// */
+
+
+
+/* 2.
+const runTarget = (fileName = 'example.back.js') => {
+  const fileAddr = path.join(targetsDir, fileName)
+  const tempFileAddr = getTempFileAddr(fileName)
+  Log('Start run target: ', fileName)
+  const targetProc = phantomjs.exec(fileAddr + ' ' + tempFileAddr)
+
+  targetProc.stdout.pipe(process.stdout)
+  targetProc.stderr.pipe(process.stderr)
+
+  targetProc.on('exit', code => {
+    onTargetFinish(code, tempFileAddr)
   })
 }
 // */

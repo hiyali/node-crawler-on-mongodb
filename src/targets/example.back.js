@@ -1,5 +1,6 @@
-const system = require('system')
 const webpage = require('webpage')
+const fs = require('fs')
+const system = require('system')
 
 const page = webpage.create()
 const url = 'https://www.so.com'
@@ -11,11 +12,12 @@ const Log = function (text) {
   const now = date + ' ' + time
   console.log(now, '      ', text)
 }
-var globalArg = null
 
+var tempFileAddr = null
 if (system.args.length === 2) {
-  globalArg = system.args[1]
-  Log('global arg' + globalArg)
+  const globalArg = system.args[1]
+  Log('globalArg: ' + globalArg)
+  tempFileAddr = globalArg
 }
 
 // page.onConsoleMessage = function (msg, lineNum, sourceId) {}
@@ -47,7 +49,14 @@ page.onLoadFinished = function (status) {
       }
       return null
     })
-    Log(result)
+    Log('Get result: ' + result)
+
+    if (result && tempFileAddr) {
+      Log('Prepare writen in file: ' + tempFileAddr)
+      fs.write(tempFileAddr, JSON.stringify(result), 'w')
+    } else {
+      Log('Information not enough, url or result is empty')
+    }
 
     /*
     // Screenshot
