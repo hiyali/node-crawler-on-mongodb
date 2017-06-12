@@ -14,12 +14,6 @@ const getTempFileAddr = function (targetFileName = '') {
   return path.join(__dirname, '../temp/' + targetFileName + '.result.txt')
 }
 
-// use MongoDB lib example
-// MongoDB.find({ salam: 1 }, Log)
-// MongoDB.insertMany([{ "salam": "dawran" }, { "dawran": "alim" }], Log)
-// MongoDB.insertOne({ "phantomjs": "saved to mongodb" }, Log)
-// MongoDB.deleteMany({ "url": { "$exists": false } }, Log) // 删除没有 url 字段的记录
-
 
 if (dontRunApi) {
   Log('Api server not run')

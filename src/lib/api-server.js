@@ -27,6 +27,7 @@ server.get('/api/tickets/:id', function (req, res, next) {
   })
   return next()
 })
+
 server.post('/api/tickets', function (req, res, next) {
   const bodyJson = req.params
   // res.send(bodyJson)
@@ -39,6 +40,29 @@ server.post('/api/tickets', function (req, res, next) {
   } else {
     res.send('Please send JSON list.')
   }
+  // */
+  return next()
+})
+
+server.put('/api/tickets/handled', function (req, res, next) {
+  const bodyJson = req.params
+  // res.send(bodyJson)
+
+  MongoDB.updateMany(bodyJson, { $set: { handled: true } }, { w: 1 }, (result) => {
+    res.charSet('utf-8')
+    res.send(result)
+  })
+  // */
+  return next()
+})
+server.put('/api/tickets/handled/:id', function (req, res, next) {
+  const id = req.params.id
+	const ObjectId = MongoDB.ObjectId
+
+  MongoDB.updateOne({ _id: new ObjectId(id) }, { $set: { handled: true } }, { w: 1 }, (result) => {
+    res.charSet('utf-8')
+    res.send(result)
+  })
   // */
   return next()
 })

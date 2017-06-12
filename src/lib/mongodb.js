@@ -88,6 +88,7 @@ const find = function (
     Log('Prepare to find the query:', JSON.stringify(query), `in ${name}`)
 
     const collection = db.collection(name)
+    // .sort({ url: 1 })
     collection.find(query).toArray(function(err, result) {
       test.equal(err, null)
 
@@ -175,15 +176,66 @@ const createIndex = function (
   MongoDo(toDo)
 }
 
+const updateMany = function (
+  filter = {},
+  update = {},
+  options = {},
+  resultCB = () => {},
+  { name } = { name: 'tickets' }
+) {
+  const toDo = (db, doneCB) => {
+    Log(`Prepare to updateMany with filter ${JSON.stringify(filter)} and`, JSON.stringify(update))
+
+    const collection = db.collection(name)
+    collection.updateMany(filter, update, options, function(err, result) {
+      test.equal(err, null)
+
+      Log(`Update mathced ${result.mathcedCount} modified ${result.modifiedCount}`)
+
+      resultCB(result)
+      doneCB(result)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
+const updateOne = function (
+  filter = {},
+  update = {},
+  options = {},
+  resultCB = () => {},
+  { name } = { name: 'tickets' }
+) {
+  const toDo = (db, doneCB) => {
+    Log(`Prepare to updateOne with filter ${JSON.stringify(filter)} and`, JSON.stringify(update))
+
+    const collection = db.collection(name)
+    collection.updateOne(filter, update, options, function(err, result) {
+      test.equal(err, null)
+
+      Log(`Updated! matched ${result.n} modified ${result.nModified}`)
+
+      resultCB(result)
+      doneCB(result)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
 export default {
   Client: MongoClient,
 	ObjectId: ObjectID,
   Do: MongoDo,
+  version: '0.0.1',
+
   insertMany,
   insertOne,
   find,
   findOne,
   deleteMany,
   createIndex,
-  version: '0.0.1'
+  updateMany,
+  updateOne,
 }
