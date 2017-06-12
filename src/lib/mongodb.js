@@ -224,6 +224,29 @@ const updateOne = function (
   MongoDo(toDo)
 }
 
+const deleteOne = function (
+  filter = {},
+  options = {},
+  resultCB = () => {},
+  { name } = { name: 'tickets' }
+) {
+  const toDo = (db, doneCB) => {
+    Log(`Prepare to deleteOne with filter ${JSON.stringify(filter)} options`, JSON.stringify(options))
+
+    const collection = db.collection(name)
+    collection.deleteOne(filter, options, function(err, result) {
+      test.equal(err, null)
+
+      Log(`Removed ${result.n} item!`)
+
+      resultCB(result)
+      doneCB(result)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
 export default {
   Client: MongoClient,
 	ObjectId: ObjectID,
@@ -238,4 +261,5 @@ export default {
   createIndex,
   updateMany,
   updateOne,
+  deleteOne,
 }

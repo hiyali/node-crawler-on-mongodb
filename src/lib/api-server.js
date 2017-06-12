@@ -67,6 +67,16 @@ server.put('/api/tickets/handled/:id', function (req, res, next) {
   return next()
 })
 
+server.del('/api/tickets/:id', function (req, res, next) {
+  const id = req.params.id
+	const ObjectId = MongoDB.ObjectId
+  MongoDB.deleteOne({ _id: new ObjectId(id) }, { w: 1 }, (result) => {
+    res.charSet('utf-8')
+    res.send(result)
+  })
+  return next()
+})
+
 server.get('/test/:name', function (req, res, next) {
   res.send(req.params)
   return next()
