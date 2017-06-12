@@ -55,7 +55,7 @@ page.onLoadFinished = function (status) {
       Log('Prepare writen in file: ' + tempFileAddr)
       fs.write(tempFileAddr, JSON.stringify(result), 'w')
     } else {
-      Log('Information not enough, url or result is empty')
+      Log('Information not enough, tempFileAddr or result is empty')
     }
 
     /*

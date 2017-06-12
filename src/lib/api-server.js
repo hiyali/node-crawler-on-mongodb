@@ -12,10 +12,18 @@ server.use(restify.plugins.bodyParser())
 
 
 server.get('/api/tickets', function (req, res, next) {
-  MongoDB.find(req.params, (result) => {
+  const query = req.params
+  const options = JSON.parse(JSON.stringify(query))
+
+  delete query['name']
+  delete query['skip']
+  delete query['limit']
+  delete query['sort']
+
+  MongoDB.find(query, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  })
+  }, options) // just use skip, limit, sort, name
   return next()
 })
 server.get('/api/tickets/:id', function (req, res, next) {

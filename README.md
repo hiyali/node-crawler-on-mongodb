@@ -4,15 +4,10 @@
   * （还没有做正规的队列）
   * 支持抓取 SPA
   * 可以针对更多的网站扩展爬虫规则
-    * - 只关心一个网站的抓去规则
-* 数据接口
-  * （还没有做缓存）
-  * 存储数据接口
-    * - 支持多项存储
-  * 读取数据接口
-    * - 支持联合查询
+    * - 只关心一个网站的抓取规则
+* 数据管理接口
 * Mongo 存储
-  * Api 简化
+  * DB Api 简化
 
 ## 依赖
 
@@ -33,7 +28,7 @@ npm start
 ### 3. 现有的 API
 
 ```java
-/api/tickets # (get) 获取所有数据
+/api/tickets # (get) 获取所有数据，分页 ?skip=10&limit=20&sort={"price":-1}，skip 是跳过多少个记录，相当于 skip = page * limit
 /api/tickets # (post, Content-Type: application/json, []) 保存多个数据
 /api/tickets/:id # (get) 用ID获取对应的数据
 /api/tickets?title=重庆&price=48元 # (get) 查询

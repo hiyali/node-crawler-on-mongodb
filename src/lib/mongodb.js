@@ -82,22 +82,31 @@ const insertOne = function (
 const find = function (
   query = {},
   resultCB = () => {},
-  { name, page, perPage } = { name: 'tickets', page: 1, perPage: 10 }
+  { name, skip, limit, sort }
 ) {
   const toDo = (db, doneCB) => {
-    Log('Prepare to find the query:', JSON.stringify(query), `in ${name}`)
+    name = name || 'tickets'
+    skip = skip ? parseInt(skip) : 0
+    limit = limit ? parseInt(limit) : 10
+    sort = sort ? JSON.parse(sort) : { handled: 1 }
+
+    Log('Prepare to find the query:', JSON.stringify(query), `with ${JSON.stringify({ name, skip, limit, sort })}`)
 
     const collection = db.collection(name)
-    // .sort({ url: 1 })
-    collection.find(query).toArray(function(err, result) {
-      test.equal(err, null)
+    collection
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .toArray(function(err, result) {
+        test.equal(err, null)
 
-      Log(`Found the following ${result.length} records`)
-      // console.dir(result)
+        Log(`Found the following ${result.length} records`)
+        // console.dir(result)
 
-      resultCB(result)
-      doneCB(result)
-    })
+        resultCB(result)
+        doneCB(result)
+      })
   }
 
   MongoDo(toDo)
