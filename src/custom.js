@@ -10,4 +10,7 @@ import { Log, GetTargets, MongoDB, ApiServer } from './lib'
 // MongoDB.insertMany([{ "salam": "dawran" }, { "dawran": "alim" }], Log)
 // MongoDB.insertOne({ "phantomjs": "saved to mongodb" }, Log)
 // MongoDB.deleteMany({ "url": { "$exists": false } }, Log) // 删除没有 url 字段的记录
+// MongoDB.updateMany({}, { $set: { status: 0 } }, { w: 1 }, (result) => {
+//   Log(result)
+// })
 

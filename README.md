@@ -29,9 +29,9 @@ npm start
 
 ```java
 /api/tickets # (get) 获取所有数据，分页 ?skip=10&limit=20&sort={"price":-1}，skip 是跳过多少个记录，相当于 skip = page * limit
+/api/tickets?title=重庆&price=48元 # (get) 查询
 /api/tickets # (post, Content-Type: application/json, []) 保存多个数据
 /api/tickets/:id # (get) 用ID获取对应的数据
-/api/tickets?title=重庆&price=48元 # (get) 查询
 /api/tickets/:id # (delete) 用ID删除对应的记录
 /api/tickets # (put) 全部标记已处理，也可以用 $set={"status":2} 形式来改其他字段
 /api/tickets/:id # (put) 标记一条数据已处理，也可以用 $set={"status":2} 形式来改其他字段
