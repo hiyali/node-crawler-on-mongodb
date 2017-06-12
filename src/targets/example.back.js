@@ -14,10 +14,10 @@ const Log = function (text) {
 }
 
 var tempFileAddr = null
-if (system.args.length === 2) {
-  const globalArg = system.args[1]
-  Log('globalArg: ' + globalArg)
-  tempFileAddr = globalArg
+const configExampleIndex = system.args.indexOf('--temp-file')
+if (configExampleIndex > -1 && system.args.length > configExampleIndex + 1) {
+  const tempFileAddr = system.args[configExampleIndex]
+  Log('tempFileAddr: ' + tempFileAddr)
 }
 
 // page.onConsoleMessage = function (msg, lineNum, sourceId) {}

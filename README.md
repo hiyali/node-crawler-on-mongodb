@@ -51,5 +51,21 @@ npm start
 ```shell
 npm run example # 执行 example.back.js 爬虫示例，无写入到数据库的步骤
 npm run dev # 执行 *.dev.js 的爬虫文件
-npm run target ./src/targets/**.js # 执行某一 ** 爬虫文件
+npm run phantomjs ./src/targets/**.js # 执行某一 ** 爬虫文件
+npm run api # 只有 api 运行
+```
+
+## 已定义的参数
+
+* ./node_modules/babel-cli/bin/babel-node.js ./src/index.js --**
+```shell
+--dont-save-data # 不要把临时文件存到数据库里
+--dont-get-targets # 不要获取 target 文件列表
+--dont-run-api # 不要启动 api 服务
+--just-get-dev-file # 只取 *.dev.js
+```
+
+* ./node_modules/phantomjs-prebuilt/bin/phantomjs ./src/targets/**.js --**
+```shell
+--temp-file # 指定临时文件的路径
 ```

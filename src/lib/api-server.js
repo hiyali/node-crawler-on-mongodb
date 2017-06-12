@@ -48,8 +48,13 @@ server.get('/test/:name', function (req, res, next) {
   return next()
 })
 
-server.listen(5555, function () {
-  Log(`${server.name} listening at ${server.url}`)
-})
+const run = () => {
+  server.listen(5555, function () {
+    Log(`${server.name} listening at ${server.url}`)
+  })
+}
 
-export default server
+export default {
+  run,
+  server
+}

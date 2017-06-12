@@ -29,12 +29,18 @@ const insertMany = function (
 
     const dataLength = dataList.length
     const collection = db.collection(name)
-    collection.insertMany(dataList, function(err, result) {
-      test.equal(err, null)
-      test.equal(dataLength, result.result.n)
-      test.equal(dataLength, result.ops.length)
+    collection.insertMany(dataList, {
+      ordered: false
+    }, function(err, result) {
+      // test.equal(err, null)
+      if (err) {
+        Log(err)
+      } else {
+        test.equal(dataLength, result.result.n)
+        test.equal(dataLength, result.ops.length)
 
-      Log(`Inserted ${dataLength} items into the ${name} collection`)
+        Log(`Inserted ${dataLength} items into the ${name} collection`)
+      }
 
       resultCB(result)
       doneCB(result)
@@ -55,11 +61,15 @@ const insertOne = function (
   const toDo = (db, doneCB) => {
     const collection = db.collection(name)
     collection.insertOne(data, function(err, result) {
-      test.equal(err, null)
-      test.equal(1, result.result.n)
-      test.equal(1, result.ops.length)
+      // test.equal(err, null)
+      if (err) {
+        Log(err)
+      } else {
+        test.equal(1, result.result.n)
+        test.equal(1, result.ops.length)
 
-      Log('Inserted', JSON.stringify(data), `into the ${name} collection`)
+        Log('Inserted', JSON.stringify(data), `into the ${name} collection`)
+      }
 
       resultCB(result)
       doneCB(result)
@@ -142,6 +152,29 @@ const deleteMany = function (
   MongoDo(toDo)
 }
 
+const createIndex = function (
+  fieldOrSpec = '' || {},
+  resultCB = () => {},
+  options = {},
+  name = 'tickets'
+) {
+  const toDo = (db, doneCB) => {
+    Log(`Prepare to create Index for ${fieldOrSpec} with ${options}`)
+
+    const collection = db.collection(name)
+    collection.createIndex(fieldOrSpec, options, function(err, indexName) {
+      test.equal(err, null)
+
+      Log(`Created Index for ${indexName} with`, JSON.stringify(options))
+
+      resultCB(indexName)
+      doneCB(indexName)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
 export default {
   Client: MongoClient,
 	ObjectId: ObjectID,
@@ -151,5 +184,6 @@ export default {
   find,
   findOne,
   deleteMany,
+  createIndex,
   version: '0.0.1'
 }
