@@ -80,7 +80,7 @@ const insertOne = function (
 }
 
 const find = function (
-  query = {},
+  query = {}, // { status: { $exists: true } }
   resultCB = () => {},
   { name, skip, limit, sort }
 ) {
@@ -88,7 +88,7 @@ const find = function (
     name = name || 'tickets'
     skip = skip ? parseInt(skip) : 0
     limit = limit ? parseInt(limit) : 10
-    sort = sort ? JSON.parse(sort) : { handled: 1 }
+    sort = sort ? JSON.parse(sort) : { status: 1 }
 
     Log('Prepare to find the query:', JSON.stringify(query), `with ${JSON.stringify({ name, skip, limit, sort })}`)
 

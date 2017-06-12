@@ -52,22 +52,34 @@ server.post('/api/tickets', function (req, res, next) {
   return next()
 })
 
-server.put('/api/tickets/handled', function (req, res, next) {
+server.put('/api/tickets', function (req, res, next) {
   const bodyJson = req.params
-  // res.send(bodyJson)
+  let setData = { status: 1 }
 
-  MongoDB.updateMany(bodyJson, { $set: { handled: true } }, { w: 1 }, (result) => {
+  if (bodyJson['$set']) {
+    setData = JSON.parse(bodyJson['$set'])
+    delete bodyJson['$set']
+  }
+
+  MongoDB.updateMany(bodyJson, { $set: setData }, { w: 1 }, (result) => {
     res.charSet('utf-8')
     res.send(result)
   })
   // */
   return next()
 })
-server.put('/api/tickets/handled/:id', function (req, res, next) {
-  const id = req.params.id
+server.put('/api/tickets/:id', function (req, res, next) {
 	const ObjectId = MongoDB.ObjectId
+  const bodyJson = req.params
+  const id = bodyJson.id
+  let setData = { status: 1 }
 
-  MongoDB.updateOne({ _id: new ObjectId(id) }, { $set: { handled: true } }, { w: 1 }, (result) => {
+  if (bodyJson['$set']) {
+    setData = JSON.parse(bodyJson['$set'])
+    delete bodyJson['$set']
+  }
+
+  MongoDB.updateOne({ _id: new ObjectId(id) }, { $set: setData }, { w: 1 }, (result) => {
     res.charSet('utf-8')
     res.send(result)
   })
