@@ -256,6 +256,28 @@ const deleteOne = function (
   MongoDo(toDo)
 }
 
+const count = function (
+  query = {},
+  resultCB = () => {},
+  { name } = { name: 'tickets' }
+) {
+  const toDo = (db, doneCB) => {
+    Log(`Prepare to get count with query ${JSON.stringify(query)}`)
+
+    const collection = db.collection(name)
+    collection.count(query, function(err, result) {
+      test.equal(err, null)
+
+      Log(`Count result ${result} records!`)
+
+      resultCB(result)
+      doneCB(result)
+    })
+  }
+
+  MongoDo(toDo)
+}
+
 export default {
   Client: MongoClient,
 	ObjectId: ObjectID,
@@ -271,4 +293,5 @@ export default {
   updateMany,
   updateOne,
   deleteOne,
+  count,
 }

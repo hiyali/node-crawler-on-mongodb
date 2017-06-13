@@ -19,6 +19,15 @@ server.use(
 )
 
 
+server.get('/api/tickets/count', function (req, res, next) {
+  const query = req.params
+
+  MongoDB.count(query, (result) => {
+    res.charSet('utf-8')
+    res.send({ count: result })
+  })
+  return next()
+})
 server.get('/api/tickets', function (req, res, next) {
   const query = req.params
   const options = JSON.parse(JSON.stringify(query))
