@@ -1,4 +1,4 @@
 #!/bin/bash
 
-mongod --dbpath $(PWD)/db --port 27188
+mongod --dbpath /hunt/db --port 27188
 
