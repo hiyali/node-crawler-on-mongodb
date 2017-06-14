@@ -130,7 +130,7 @@ const findOne = function (
 				resultCB(result)
 			} else {
 				Log(`Not found any record`)
-				resultCB({message: "Not found"})
+				resultCB({message: 'Not found'})
 			}
 			doneCB(result)
     })
