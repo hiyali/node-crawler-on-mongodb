@@ -4,7 +4,7 @@ import test from 'assert'
 import { Log } from './index.js'
 
 // Connection URL
-const url = 'mongodb://localhost:27188/huntCrawler'
+const url = 'mongodb://172.17.0.2:27188/huntCrawler' || 'mongodb://localhost:27188/huntCrawler'
 
 // for Connected
 const MongoDo = (toDo) => {
