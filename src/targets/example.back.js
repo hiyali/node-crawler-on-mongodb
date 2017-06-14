@@ -16,7 +16,7 @@ const Log = function (text) {
 var tempFileAddr = null
 const configExampleIndex = system.args.indexOf('--temp-file')
 if (configExampleIndex > -1 && system.args.length > configExampleIndex + 1) {
-  const tempFileAddr = system.args[configExampleIndex]
+  const tempFileAddr = system.args[configExampleIndex + 1]
   Log('tempFileAddr: ' + tempFileAddr)
 }
 
