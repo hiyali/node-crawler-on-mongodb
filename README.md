@@ -32,9 +32,8 @@ yarn
 npm start
 ```
 
-### 3. The finished API
+### 3. The finished API (default on: http://localhost:5555)
 
-```java
 | Methods            | Uri                                            | { Header } Body                  |
 | ------------------ | ---------------------------------------------- | -------------------------------- |
 | GET                | /api/tickets # Pageable ?skip=10&limit=20&sort={"price":-1} (skip = page * limit) | |
@@ -44,7 +43,6 @@ npm start
 | DELETE             | /api/tickets/:id # Delete One                  |                                  |
 | PUT                | /api/tickets # Update multiple, You also can use like this `$set={"status":2}` |  |
 | PUT                | /api/tickets/:id # Update One                  |                                  |
-```
 
 ## Development
 
@@ -52,7 +50,7 @@ Crawl rules at src/targets/*
 
 ```shell
 npm run api # Run data api
-npm run crawl # Run crawl
+npm run crawl # Run crawl (src/targets/*.js, not *.back.js)
 npm run custom # Run custom.js
 npm run dev # Run src/targets/*.dev.js
 npm run example # Run src/targets/example.back.js , and not save the data to mongo
