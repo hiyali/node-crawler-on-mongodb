@@ -43,6 +43,10 @@ npm start
 | PUT                | /api/tickets             |                      | Update multiple, You also can use like this `$set={"status":2}` |
 | PUT                | /api/tickets/:id         |                      | Update One          |
 
+## Design
+
+![Crawler design](https://raw.githubusercontent.com/hiyali/nodejs-phantomjs-mongodb-crawler/master/assets/design.png "Crawler design")
+
 ## Development
 
 Crawl rules at src/targets/*
