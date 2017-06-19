@@ -14,6 +14,15 @@
 
 ## Usage
 
+### Install
+```shell
+npm i
+```
+or
+```shell
+yarn
+```
+
 ### 1. start Mongodb server
 ```shell
 ./src/sh/mongodb_serv.sh
@@ -26,13 +35,15 @@ npm start
 ### 3. The finished API
 
 ```java
-(GET) /api/tickets # Pageable ?skip=10&limit=20&sort={"price":-1} (skip = page * limit)
-(GET) /api/tickets?title=mongo&price=50USD # filter
-(POST, Content-Type: application/json, []) /api/tickets # Save multiple inserts
-(GET) /api/tickets/:id # Get one
-(DELETE) /api/tickets/:id # Delete One
-(PUT) /api/tickets # Update multiple, You also can use like this `$set={"status":2}`
-(PUT) /api/tickets/:id # Update One
+| Methods            | Uri                                            | { Header } Body                  |
+| ------------------ | ---------------------------------------------- | -------------------------------- |
+| GET                | /api/tickets # Pageable ?skip=10&limit=20&sort={"price":-1} (skip = page * limit) | |
+| GET                | /api/tickets?title=mongo&price=50USD # filter                                     |
+| POST               | /api/tickets # Save multiple inserts           | {Content-Type: application/json} [] |
+| GET                | /api/tickets/:id # Get one                     |                                  |
+| DELETE             | /api/tickets/:id # Delete One                  |                                  |
+| PUT                | /api/tickets # Update multiple, You also can use like this `$set={"status":2}` |  |
+| PUT                | /api/tickets/:id # Update One                  |                                  |
 ```
 
 ## Development
