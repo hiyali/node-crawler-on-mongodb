@@ -34,15 +34,14 @@ npm start
 
 ### 3. The finished API (default on: http://localhost:5555)
 
-| Methods            | Uri                                            | { Header } Body                  |
-| ------------------ | ---------------------------------------------- | -------------------------------- |
-| GET                | /api/tickets # Pageable ?skip=10&limit=20&sort={"price":-1} (skip = page * limit) | |
-| GET                | /api/tickets?title=mongo&price=50USD # filter                                     |
-| POST               | /api/tickets # Save multiple inserts           | {Content-Type: application/json} [] |
-| GET                | /api/tickets/:id # Get one                     |                                  |
-| DELETE             | /api/tickets/:id # Delete One                  |                                  |
-| PUT                | /api/tickets # Update multiple, You also can use like this `$set={"status":2}` |  |
-| PUT                | /api/tickets/:id # Update One                  |                                  |
+| Methods            | Uri                      | { Header } Body      | Explain             |
+| ------------------ | ------------------------ | -------------------- | ------------------- |
+| GET                | /api/tickets             |                      | Pageable and sort with ?skip=10&limit=20&sort={"price":-1} (skip = page * limit), filter with query ?title=mongo&price=50USD |
+| POST               | /api/tickets             | {Content-Type: application/json} [] | # Save multiple inserts |
+| GET                | /api/tickets/:id         |                      | Get one             |
+| DELETE             | /api/tickets/:id         |                      | Delete One          |
+| PUT                | /api/tickets             |                      | Update multiple, You also can use like this `$set={"status":2}` |
+| PUT                | /api/tickets/:id         |                      | Update One          |
 
 ## Development
 
