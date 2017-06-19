@@ -1,4 +1,4 @@
-# Nodejs Phantomjs Mongodb Crawler
+# Nodejs Phantomjs Crawler on Mongodb
 
 * Nodejs + Phantomjs crawler
   * support to crawl the SPA
