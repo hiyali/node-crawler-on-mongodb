@@ -37,7 +37,7 @@ npm start
 | Methods            | Uri                      | { Header } Body      | Explain             |
 | ------------------ | ------------------------ | -------------------- | ------------------- |
 | GET                | /api/tickets             |                      | Pageable and sort with ?skip=10&limit=20&sort={"price":-1} (skip = page * limit), filter with query ?title=mongo&price=50USD |
-| POST               | /api/tickets             | {Content-Type: application/json} [] | # Save multiple inserts |
+| POST               | /api/tickets             | {Content-Type: application/json} [] | Save multiple inserts |
 | GET                | /api/tickets/:id         |                      | Get one             |
 | DELETE             | /api/tickets/:id         |                      | Delete One          |
 | PUT                | /api/tickets             |                      | Update multiple, You also can use like this `$set={"status":2}` |
