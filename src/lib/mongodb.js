@@ -88,7 +88,7 @@ const find = function (
     name = name || 'tickets'
     skip = skip ? parseInt(skip) : 0
     limit = limit ? parseInt(limit) : 10
-    sort = sort ? JSON.parse(sort) : { status: 1 }
+    sort = sort ? JSON.parse(sort) : {}
 
     Log('Prepare to find the query:', JSON.stringify(query), `with ${JSON.stringify({ name, skip, limit, sort })}`)
 
