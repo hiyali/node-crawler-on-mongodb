@@ -14,7 +14,13 @@
 
 ## Usage
 
-### Install
+### 1. Clone
+```shell
+git clone https://github.com/hiyali/node-crawler-on-mongodb.git crawler
+cd crawler
+```
+
+### 2. Install
 ```shell
 npm i
 ```
@@ -23,16 +29,17 @@ or
 yarn
 ```
 
-### 1. start Mongodb server
+### 3. Start Mongodb server
 ```shell
 ./src/sh/mongodb_serv.sh
 ```
-### 2. start Crawl and Serve for data
+
+### 4. Start Crawl and Serve for data
 ```shell
 npm start
 ```
 
-### 3. The finished API (default on: http://localhost:5555)
+### 5. The finished API (default on: http://localhost:5555)
 
 | Methods            | Uri                      | { Header } Body      | Explain             |
 | ------------------ | ------------------------ | -------------------- | ------------------- |
