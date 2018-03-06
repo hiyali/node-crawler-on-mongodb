@@ -16,21 +16,13 @@ const Log = function (text) {
 var tempFileAddr = null
 const configExampleIndex = system.args.indexOf('--temp-file')
 if (configExampleIndex > -1 && system.args.length > configExampleIndex + 1) {
-  const tempFileAddr = system.args[configExampleIndex + 1]
+  tempFileAddr = system.args[configExampleIndex + 1]
   Log('tempFileAddr: ' + tempFileAddr)
 }
 
 // page.onConsoleMessage = function (msg, lineNum, sourceId) {}
 
 page.onLoadFinished = function (status) {
-  const Log = function (text) {
-    const _D = new Date()
-    const date = _D.getFullYear() + '/' + (_D.getMonth() + 1) + '/' + _D.getDate()
-    const time = _D.getHours() + ':' + _D.getMinutes() + ':' + _D.getSeconds()
-    const now = date + ' ' + time
-    console.log(now, '      ', text)
-  }
-
   Log('Start inputing and clicking')
   page.evaluate(function () {
     // input & click
@@ -52,7 +44,7 @@ page.onLoadFinished = function (status) {
     Log('Get result: ' + result)
 
     if (result && tempFileAddr) {
-      Log('Prepare writen in file: ' + tempFileAddr)
+      Log('Prepare for write into the file: ' + tempFileAddr)
       fs.write(tempFileAddr, JSON.stringify(result), 'w')
     } else {
       Log('Information not enough, tempFileAddr or result is empty')

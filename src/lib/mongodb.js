@@ -9,6 +9,11 @@ const url = 'mongodb://crawler_docker_container:27188/huntCrawler'
 // for Connected
 const MongoDo = (toDo) => {
   MongoClient.connect(url, function (err, db) {
+    if (err) {
+      Log(err)
+      return
+    }
+
     test.equal(null, err)
     Log('MongoClient connected correctly to server')
 

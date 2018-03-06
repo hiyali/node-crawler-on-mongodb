@@ -27,7 +27,7 @@ const next = () => {
   }
 
   const fileName = queuedTargetsList.pop()
-  Log(`Target no.${length} (${fileName}) prepare run`)
+  Log(`Target no.${length} (${fileName}) preparing to run`)
   runTarget(fileName)
 }
 
@@ -40,9 +40,9 @@ const targetsReady = function (targetsList) {
 GetTargets(targetsDir, targetsReady)
 
 
-const onTargetFinish = (existWith = null, tempFileAddr = null) => {
-  if (existWith) {
-    Log('Phantomjs exit with:', existWith)
+const onTargetFinish = (exitWithErr = null, tempFileAddr = null) => {
+  if (exitWithErr) {
+    Log('Phantomjs exit with:', exitWithErr)
   } else {
     Log('Phantomjs exit successfully')
 
@@ -68,6 +68,7 @@ const onTargetFinish = (existWith = null, tempFileAddr = null) => {
       Log(`File ${tempFileAddr} not found!`)
     }
   }
+
   setTimeout(() => {
     next()
   }, 100)
@@ -80,9 +81,12 @@ const runTarget = (fileName = 'example.back.js') => {
   const tempFileAddr = getTempFileAddr(fileName)
   const childArgs = [
     path.join(targetsDir, fileName),
+    '--post-endpoint', // The server's end point that to save results
+    'http://localhost:5555/api/tickets',
     '--temp-file',
     tempFileAddr
   ]
+
   // Log('Start run target: ', fileName)
   childProc.execFile(binPath, childArgs, function(err, stdout, stderr) {
     Log('Stdout: ', stdout)
