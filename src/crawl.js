@@ -5,13 +5,11 @@ import fs from 'fs'
 
 import { Log, GetTargets, MongoDB } from './lib'
 
-const dontSaveData = process.argv.indexOf('--dont-save-data') > -1 ? true : false
-
+// const dontSaveData = process.argv.indexOf('--dont-save-data') > -1 ? true : false
 const targetsDir = path.join(__dirname, 'targets')
-const getTempFileAddr = function (targetFileName = '') {
+/* const getTempFileAddr = function (targetFileName = '') {
   return path.join(__dirname, '../temp/' + targetFileName + '.result.txt')
-}
-
+} // */
 
 let queuedTargetsList = []
 const next = () => {
@@ -40,36 +38,11 @@ const targetsReady = function (targetsList) {
 GetTargets(targetsDir, targetsReady)
 
 
-const onTargetFinish = (exitWithErr = null, tempFileAddr = null) => {
+const onTargetFinish = (exitWithErr = null) => {
   if (exitWithErr) {
     Log('Phantomjs exit with:', exitWithErr)
   } else {
     Log('Phantomjs exit successfully')
-
-    if (!tempFileAddr) {
-      Log(`Variable tempFileAddr is not defined`)
-    } else if (dontSaveData) {
-      Log(`File ${tempFileAddr} not be saving to DB...`)
-    } else if (fs.existsSync(tempFileAddr)) {
-      /*
-       * Change the save logic to post results.
-      fs.readFile(tempFileAddr, 'utf8', (err, tempData) => {
-        tempData = JSON.parse(tempData)
-
-        if (typeof tempData === 'object' && tempData.hasOwnProperty('length')) {
-          MongoDB.insertMany(tempData, (result) => {
-            Log(result)
-          })
-        } else {
-          MongoDB.insertOne(tempData, (result) => {
-            Log(result)
-          })
-        }
-      })
-      // */
-    } else {
-      Log(`File ${tempFileAddr} not found!`)
-    }
   }
 
   setTimeout(() => {
@@ -81,15 +54,11 @@ const onTargetFinish = (exitWithErr = null, tempFileAddr = null) => {
 //* 1.
 const runTarget = (fileName = 'example.back.js') => {
   const binPath = phantomjs.path
-  const tempFileAddr = getTempFileAddr(fileName)
   const childArgs = [
     path.join(targetsDir, fileName),
-    '--load-images=yes', // for improve the performance
     '--post-endpoint', // The server's end point that to save results
     'http://crawler_docker_container:5555/api/tickets',
-    // 'http://crawler_docker_container:8000/',
-    '--temp-file',
-    tempFileAddr
+    '--load-images=yes' // for improve the performance
   ]
 
   // Log('Start run target: ', fileName)
@@ -97,7 +66,7 @@ const runTarget = (fileName = 'example.back.js') => {
     Log('Stdout: ', stdout)
     Log('StdErr: ', stderr)
 
-    onTargetFinish(err, tempFileAddr)
+    onTargetFinish(err)
   })
 }
 // */

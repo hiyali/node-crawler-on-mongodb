@@ -3,12 +3,10 @@ const fs = require('fs')
 const system = require('system')
 
 const page = webpage.create()
-const postPage = webpage.create()
-
 const url = 'https://www.piaoniu.com/{CATEGORY_NAME}-all/hottest/p{PAGE_NUM}'
 const siteUrl = 'piaoniu.com'
 
-var categoryNameList = ['cs', 'cd'] // FIXME: for test, 长沙 cs, 成都 cd
+var categoryNameList = ['sh', 'bj', 'gz', 'sz', 'cd', 'cq', 'tj', 'hz', 'nj', 'wh', 'cs'] // 长沙 cs, 成都 cd ...
 var currentPageNum = 1
 var currentCategoryName = ''
 
@@ -108,7 +106,7 @@ const openNextPage = function (options) {
     options = {}
   }
 
-  // FIXME: Below statement for test, delete currentPageNum > 3 for normal total crawler
+  // FIXME: Below statement for test, delete currentPageNum >= 2 for normal total crawler
   if (currentPageNum >= 2 || options.categoryNext || options.categoryBegin) { // category next
     if (categoryNameList.length === 0) {
       Log('Finished for ' + siteUrl)
@@ -134,7 +132,7 @@ const openNextPage = function (options) {
         Log('Status of ' + _url + ': ' + status)
       })
     }, 1)
-  }, 1000)
+  }, 500)
 }
 
 openNextPage({ categoryBegin: true })
