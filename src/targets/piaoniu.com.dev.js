@@ -30,7 +30,12 @@ if (postEndpointArgIdx > -1 && system.args.length > postEndpointArgIdx + 1) {
   phantom.exit(1)
 }
 
-// page.onConsoleMessage = function (msg, lineNum, sourceId) {}
+page.settings.clearMemoryCaches = true
+// page.viewportSize = { width: 1200, height: 1000 }
+
+page.onConsoleMessage = function (msg, lineNum, sourceId) {
+  Log(msg)
+}
 
 page.onLoadFinished = function (status) {
   page.includeJs('https://cdn.bootcss.com/jquery/1.12.4/jquery.js', function () {
@@ -118,10 +123,18 @@ const openNextPage = function (options) {
   // construct url
   const _url = url.replace('{CATEGORY_NAME}', currentCategoryName).replace('{PAGE_NUM}', currentPageNum)
   Log('Start opening: ' + _url)
+
   // open it
-  page.open(_url, function (status) {
-    Log('Status of ' + _url + ': ' + status)
-  })
+  page.clearMemoryCache()
+  // page.close() // not working!
+
+  setTimeout(function () {
+    setTimeout(function () {
+      page.open(_url, function (status) {
+        Log('Status of ' + _url + ': ' + status)
+      })
+    }, 1)
+  }, 1000)
 }
 
 openNextPage({ categoryBegin: true })

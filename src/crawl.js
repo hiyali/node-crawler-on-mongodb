@@ -84,6 +84,7 @@ const runTarget = (fileName = 'example.back.js') => {
   const tempFileAddr = getTempFileAddr(fileName)
   const childArgs = [
     path.join(targetsDir, fileName),
+    '--load-images=yes', // for improve the performance
     '--post-endpoint', // The server's end point that to save results
     'http://crawler_docker_container:5555/api/tickets',
     // 'http://crawler_docker_container:8000/',
