@@ -51,6 +51,8 @@ const onTargetFinish = (exitWithErr = null, tempFileAddr = null) => {
     } else if (dontSaveData) {
       Log(`File ${tempFileAddr} not be saving to DB...`)
     } else if (fs.existsSync(tempFileAddr)) {
+      /*
+       * Change the save logic to post results.
       fs.readFile(tempFileAddr, 'utf8', (err, tempData) => {
         tempData = JSON.parse(tempData)
 
@@ -64,6 +66,7 @@ const onTargetFinish = (exitWithErr = null, tempFileAddr = null) => {
           })
         }
       })
+      // */
     } else {
       Log(`File ${tempFileAddr} not found!`)
     }
@@ -82,7 +85,8 @@ const runTarget = (fileName = 'example.back.js') => {
   const childArgs = [
     path.join(targetsDir, fileName),
     '--post-endpoint', // The server's end point that to save results
-    'http://localhost:5555/api/tickets',
+    'http://crawler_docker_container:5555/api/tickets',
+    // 'http://crawler_docker_container:8000/',
     '--temp-file',
     tempFileAddr
   ]

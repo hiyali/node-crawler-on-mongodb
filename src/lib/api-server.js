@@ -58,7 +58,7 @@ server.post('/api/tickets', function (req, res, next) {
   // res.send(bodyJson)
 
   if (bodyJson && bodyJson.hasOwnProperty('length')) {
-    MongoDB.insertMany(req.params, (result) => {
+    MongoDB.insertMany(bodyJson, (result) => {
       res.charSet('utf-8')
       res.send(result)
     })

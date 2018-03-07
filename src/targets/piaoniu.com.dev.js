@@ -3,8 +3,11 @@ const fs = require('fs')
 const system = require('system')
 
 const page = webpage.create()
+const postPage = webpage.create()
 
 const url = 'https://www.piaoniu.com/{CATEGORY_NAME}-all/hottest/p{PAGE_NUM}'
+const siteUrl = 'piaoniu.com'
+
 var categoryNameList = ['cs', 'cd'] // FIXME: for test, 长沙 cs, 成都 cd
 var currentPageNum = 1
 var currentCategoryName = ''
@@ -33,20 +36,23 @@ page.onLoadFinished = function (status) {
   page.includeJs('https://cdn.bootcss.com/jquery/1.12.4/jquery.js', function () {
     // get Result
     Log('Starts to getting result')
-    const result = page.evaluate(function () {
+    var result = page.evaluate(function () {
       const lists = $('.results li')
 
       const resultData = []
       if (lists && lists.length > 0) {
         $(lists).each(function (index) {
-          const priceEl = $(this).find('.sale-price .strong')
-          if (priceEl.text() && priceEl.text() !== '') {
+          const priceContEl = $(this).find('.price-cont')
+          if (priceContEl.text() && priceContEl.text() !== '') {
             resultData.push({
               title: $(this).find('.title a').text(),
-              time: $(this).find('.time').text(),
+              date_time: $(this).find('.time').text(),
               location: $(this).find('.venue').text(),
-              price: priceEl.text(),
-              url: 'https://www.piaoniu.com' + $(this).find('>a').attr('href')
+              status: priceContEl.text(),
+              url: 'https://www.piaoniu.com' + $(this).find('>a').attr('href'),
+              image_url: $(this).find('.poster').attr('src'),
+              related_ticket_id: false,
+              site_url: 'piaoniu.com' // siteUrl // can't used in evaluate function?
             })
           }
         })
@@ -54,23 +60,37 @@ page.onLoadFinished = function (status) {
       }
       return null
     })
-    Log('Get result: ' + result)
+    Log('Got result\'s length: ' + result.length)
 
     if (result && result.length > 0) {
-      const _postUrl = postEndpoint + '?siteUrl=piaoniu.com&categoryName=' + currentCategoryName + '&pageNum=' + currentPageNum
-      Log('Prepare for save into the server: ' + _postUrl)
+      const supportArgs = {
+        siteUrl: siteUrl,
+        categoryName: currentCategoryName,
+        pageNum: currentPageNum
+      }
+      Log('Prepare for save into the server: ' + postEndpoint)
 
-      const postPage = webpage.create()
-      postPage.open(_postUrl, 'post', result, function (status) {
-        Log('Server save args: ' + currentCategoryName + ' / ' + currentPageNum)
-        if (status === 'success') {
-          Log('Saved success!')
-          openNextPage({ pageNext: true })
-        } else {
-          Log('Something wrong!')
-          openNextPage({ pageNext: true }) // can use 'retry' here?
-        }
-      })
+      page.onCallback = function (onpOption, status, data) {
+        Log('The onCallback function ' + status + ': ' + JSON.stringify(data))
+        openNextPage(onpOption)
+      }
+
+      page.evaluate(function (postEndpoint, result, supportArgs) {
+        $.ajax({
+          type: 'POST',
+          url: postEndpoint,
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          data: JSON.stringify(result),
+          // data: JSON.stringify(Object.assign(supportArgs, { data: result })),
+          success: function (data) {
+            return window.callPhantom({ pageNext: true }, 'success', data)
+          },
+          error: function (err) {
+            return window.callPhantom({ pageNext: true }, 'error', err)
+          }
+        })
+      }, postEndpoint, result, supportArgs)
     } else {
       Log('Information not enough, result is empty')
       openNextPage({ categoryNext: true })
@@ -84,9 +104,9 @@ const openNextPage = function (options) {
   }
 
   // FIXME: Below statement for test, delete currentPageNum > 3 for normal total crawler
-  if (currentPageNum >= 3 || options.categoryNext || options.categoryBegin) { // category next
+  if (currentPageNum >= 2 || options.categoryNext || options.categoryBegin) { // category next
     if (categoryNameList.length === 0) {
-      Log('Finished for piaoniu.com')
+      Log('Finished for ' + siteUrl)
       phantom.exit(0)
     }
     currentCategoryName = categoryNameList.shift()
