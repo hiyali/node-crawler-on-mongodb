@@ -17,9 +17,9 @@ const MongoDo = (toDo) => {
     test.equal(null, err)
     Log('MongoClient connected correctly to server')
 
-    toDo(db, (result) => {
+    toDo(db, () => {
       db.close()
-      Log('MongoClient closed... ' + result)
+      Log('MongoClient is closing...')
     })
   })
 }
