@@ -10,7 +10,6 @@ if (process.argv.indexOf('--just-get-dev-file') > -1) {
 const getTargets = (targetsDir, callback) => {
   fs.readdir(targetsDir, function(err, fileList) {
     const targetList = []
-    const fl = fileList
     if (err) {
       Log(err)
       return

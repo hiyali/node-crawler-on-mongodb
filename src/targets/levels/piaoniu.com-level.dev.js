@@ -2,12 +2,6 @@ const webpage = require('webpage')
 const system = require('system')
 
 const page = webpage.create()
-const url = 'https://www.piaoniu.com/{CATEGORY_NAME}-all/hottest/p{PAGE_NUM}'
-const siteUrl = 'piaoniu.com'
-
-var categoryNameList = ['sh', 'bj', 'gz', 'sz', 'cd', 'cq', 'tj', 'hz', 'nj', 'wh', 'cs'] // 长沙 cs, 成都 cd ...
-var currentPageNum = 1
-var currentCategoryName = ''
 
 const Log = function (text) {
   const _D = new Date()
@@ -18,6 +12,8 @@ const Log = function (text) {
 }
 
 var postEndpoint = null
+var url = null
+var _id = null
 const postEndpointArgIdx = system.args.indexOf('--post-endpoint')
 if (postEndpointArgIdx > -1 && system.args.length > postEndpointArgIdx + 1) {
   postEndpoint = system.args[postEndpointArgIdx + 1]
@@ -26,11 +22,27 @@ if (postEndpointArgIdx > -1 && system.args.length > postEndpointArgIdx + 1) {
   Log('The postEndpoint is not found!')
   phantom.exit(1)
 }
+const urlArgIdx = system.args.indexOf('--url')
+if (urlArgIdx > -1 && system.args.length > urlArgIdx + 1) {
+  url = system.args[urlArgIdx + 1]
+  Log('url is: ' + url)
+} else {
+  Log('The url is not found!')
+  phantom.exit(1)
+}
+const _idArgIdx = system.args.indexOf('--_id')
+if (_idArgIdx > -1 && system.args.length > _idArgIdx + 1) {
+  _id = system.args[_idArgIdx + 1]
+  Log('_id is: ' + _id)
+} else {
+  Log('The _id is not found!')
+  phantom.exit(1)
+}
 
 page.settings.clearMemoryCaches = true
 // page.viewportSize = { width: 1200, height: 1000 }
 
-page.onConsoleMessage = function (msg/*, lineNum, sourceId*/) {
+page.onConsoleMessage = function (msg/*, lineNum, sourceId */) {
   Log(msg)
 }
 
@@ -38,7 +50,7 @@ page.onLoadFinished = function () {
   page.includeJs('https://cdn.bootcss.com/jquery/1.12.4/jquery.js', function () {
     // get Result
     Log('Starts to getting result')
-    var result = page.evaluate(function () {
+    var result = page.evaluate(function (_id, date_step) {
       const lists = $('.results li')
 
       const resultData = []
@@ -47,30 +59,23 @@ page.onLoadFinished = function () {
           const priceContEl = $(this).find('.price-cont')
           if (priceContEl.text() && priceContEl.text() !== '') {
             resultData.push({
-              is_pivotal: false, // hunt ticket's information is pivotal
-              related_ticket_id: null,
-              title: $(this).find('.title a').text(),
+              parent_ticket_id: _id,
+              date_step: date_step,
               date_time: $(this).find('.time').text(),
-              status: priceContEl.text(),
-              location: $(this).find('.venue').text(),
-              url: 'https://www.piaoniu.com' + $(this).find('>a').attr('href'),
-              image_url: $(this).find('.poster').attr('src'),
-              site_url: 'piaoniu.com' // siteUrl // can't used in evaluate function?
+              name: $(this).find('>a').attr('href'),
+              status: $(this).find('.poster').attr('src'),
+              price: priceContEl.text(),
+              real_price: 'piaoniu.com',
             })
           }
         })
         return resultData
       }
       return null
-    })
+    }, _id, date_step)
     Log('Got result\'s length: ' + result.length)
 
     if (result && result.length > 0) {
-      const supportArgs = {
-        siteUrl: siteUrl,
-        categoryName: currentCategoryName,
-        pageNum: currentPageNum
-      }
       Log('Prepare for save into the server: ' + postEndpoint)
 
       page.onCallback = function (onpOption, status, data) {
@@ -78,7 +83,7 @@ page.onLoadFinished = function () {
         openNextPage(onpOption)
       }
 
-      page.evaluate(function (postEndpoint, result/*, supportArgs*/) {
+      page.evaluate(function (postEndpoint, result/*, supportArgs */) {
         $.ajax({
           type: 'POST',
           url: postEndpoint,
@@ -93,7 +98,7 @@ page.onLoadFinished = function () {
             return window.callPhantom({ pageNext: true }, 'error', err)
           }
         })
-      }, postEndpoint, result, supportArgs)
+      }, postEndpoint, result)
     } else {
       Log('Information not enough, result is empty')
       openNextPage({ categoryNext: true })
@@ -106,30 +111,15 @@ const openNextPage = function (options) {
     options = {}
   }
 
-  // FIXME: Below statement for test, delete currentPageNum >= 2 for normal total crawler
-  if (currentPageNum >= 2 || options.categoryNext || options.categoryBegin) { // category next
-    if (categoryNameList.length === 0) {
-      Log('Finished for ' + siteUrl)
-      phantom.exit(0)
-    }
-    currentCategoryName = categoryNameList.shift()
-    currentPageNum = 1
-  } else if (options.pageNext) { // page next
-    currentPageNum++
-  }
-
-  // construct url
-  const _url = url.replace('{CATEGORY_NAME}', currentCategoryName).replace('{PAGE_NUM}', currentPageNum)
-  Log('Start opening: ' + _url)
-
   // open it
   page.clearMemoryCache()
   // page.close() // not working!
 
   setTimeout(function () {
     setTimeout(function () {
-      page.open(_url, function (status) {
-        Log('Status of ' + _url + ': ' + status)
+      Log('Start opening: ' + url)
+      page.open(url, function (status) {
+        Log('Status of ' + url + ': ' + status)
       })
     }, 1)
   }, 500)

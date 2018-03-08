@@ -1,7 +1,7 @@
 import path from 'path'
 import childProc from 'child_process'
 import phantomjs from 'phantomjs-prebuilt'
-import fs from 'fs'
+// import fs from 'fs'
 
 import { Log, GetTargets, MongoDB } from './lib'
 

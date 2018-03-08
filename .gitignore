@@ -2,3 +2,6 @@ node_modules/
 db/
 screenshot/
 temp/
+.yarnclean
+*.log
+*.DS_Store

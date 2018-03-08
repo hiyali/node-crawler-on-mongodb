@@ -19,7 +19,7 @@ const MongoDo = (toDo) => {
 
     toDo(db, (result) => {
       db.close()
-      Log('MongoClient closed')
+      Log('MongoClient closed... ' + result)
     })
   })
 }
@@ -134,7 +134,7 @@ const findOne = function (
 				// console.dir(result)
 				resultCB(result)
 			} else {
-				Log(`Not found any record`)
+				Log('Not found any record')
 				resultCB({message: 'Not found'})
 			}
 			doneCB(result)
