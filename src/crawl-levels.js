@@ -33,7 +33,7 @@ const targetsDir = path.join(__dirname, 'targets/levels');
         /*
          * Create Indexes for levels
          * ====
-         * date_step + url + date_time + name is unique
+         * date_step + parent_ticket_id + date_time + name is unique
          */
         MongoDB.createIndex(
           { 'date_step': 1, 'parent_ticket_id': 1, 'date_time': 1, 'name': 1 },
@@ -54,8 +54,8 @@ const targetsDir = path.join(__dirname, 'targets/levels');
       MongoDB.count({ site_url: currentSiteUrl }, resolve, { name: 'tickets' })
     })
     Log(`Found ${currentSiteRecordCount} records`)
-    // FIXME: test for 5 records blow
-    currentSiteRecordCount = currentSiteRecordCount > 5 ? 5 : currentSiteRecordCount
+    // FIXME: test for 3 records blow
+    currentSiteRecordCount = currentSiteRecordCount > 3 ? 3 : currentSiteRecordCount
     currentSiteRecordIndex = 0
 
     // Run record
@@ -81,6 +81,7 @@ const targetsDir = path.join(__dirname, 'targets/levels');
     currentSiteRecordIndex++
 
     // Run target
+    Log(`Prepare to run record ${currentSiteRecordIndex} of ${currentSiteRecordCount}`)
     runTarget(records[0], nextRecord)
   }
 
@@ -99,7 +100,7 @@ const targetsDir = path.join(__dirname, 'targets/levels');
       date_step,
       '--load-images=yes' // for improve the performance
     ]
-    Log('Start run target _id: ', ticketRecord._id, ' / url:', ticketRecord.url)
+    Log('Start run target for ticket._id: ', ticketRecord._id)
 
     // Waiting for phantom targets working done
     const exitWithErr = await new Promise((resolve, reject) => {
