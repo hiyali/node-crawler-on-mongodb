@@ -49,7 +49,7 @@ page.onLoadFinished = function (status) {
 				            location: $(this).find('.show-addr').text(),
 				            url: 'https://www.tking.cn' + $(this).attr('href'),
 				            image_url: $(this).find('img').src,
-				            site_url: 'https://www.tking.cn'
+				            site_url: 'tking.cn'
 			            })
 			        }
 		    	})
