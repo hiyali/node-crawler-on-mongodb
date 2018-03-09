@@ -36,7 +36,7 @@ const targetsDir = path.join(__dirname, 'targets/levels');
          * date_step + url + date_time + name is unique
          */
         MongoDB.createIndex(
-          { 'date_step': 1, 'url': 1, 'date_time': 1, 'name': 1 },
+          { 'date_step': 1, 'parent_ticket_id': 1, 'date_time': 1, 'name': 1 },
           resolve,
           { unique: true, background: true, w: 1, dropDups: true },
           'levels'

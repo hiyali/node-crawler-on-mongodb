@@ -21,14 +21,14 @@ MongoDB.insertOne({ 'phantomjs': 'saved to mongodb' }, Log, { name: 'levels' })
 // date_step + url + date_time + name is unique
 MongoDB.insertOne({
   date_step: '20180309_1',
-  url: 'https://piaoniu.com/asdfjlk/adf',
-  date_time: '2016djf01239jakdfjl2',
-  name: 'salamjan'
+  ticket_parent_id: 'a219d192b64bbd487e9a96',
+  date_time: '2018年03月31日 周六 20:00',
+  name: '380元特价'
 }, Log, { name: 'levels' })
 
 MongoDB.insertOne({
   date_step: '20180309_1',
-  url: 'https://piaoniu.com/asdfjlk/adf',
-  date_time: '2016djf01239jakdfjl2',
-  name: 'salamjan'
+  ticket_parent_id: 'a219d192b64bbd487e9a96',
+  date_time: '2018年03月31日 周六 20:00',
+  name: '380元特价'
 }, Log, { name: 'levels' })
