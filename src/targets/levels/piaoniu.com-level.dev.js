@@ -14,6 +14,8 @@ const Log = function (text) {
 var postEndpoint = null
 var url = null
 var _id = null
+var date_step = null
+Log('\n')
 const postEndpointArgIdx = system.args.indexOf('--post-endpoint')
 if (postEndpointArgIdx > -1 && system.args.length > postEndpointArgIdx + 1) {
   postEndpoint = system.args[postEndpointArgIdx + 1]
@@ -30,7 +32,7 @@ if (urlArgIdx > -1 && system.args.length > urlArgIdx + 1) {
   Log('The url is not found!')
   phantom.exit(1)
 }
-const _idArgIdx = system.args.indexOf('--_id')
+const _idArgIdx = system.args.indexOf('--ticket-_id')
 if (_idArgIdx > -1 && system.args.length > _idArgIdx + 1) {
   _id = system.args[_idArgIdx + 1]
   Log('_id is: ' + _id)
@@ -38,6 +40,19 @@ if (_idArgIdx > -1 && system.args.length > _idArgIdx + 1) {
   Log('The _id is not found!')
   phantom.exit(1)
 }
+const date_stepArgIdx = system.args.indexOf('--level-date_step')
+if (date_stepArgIdx > -1 && system.args.length > date_stepArgIdx + 1) {
+  date_step = system.args[date_stepArgIdx + 1]
+  Log('date_step is: ' + date_step)
+} else {
+  Log('The date_step is not found!')
+  phantom.exit(1)
+}
+phantom.exit(0) // FIXME: delete
+
+// --------------------
+// The logic of getting level's data is here
+// --------------------
 
 page.settings.clearMemoryCaches = true
 // page.viewportSize = { width: 1200, height: 1000 }
@@ -115,14 +130,10 @@ const openNextPage = function (options) {
   page.clearMemoryCache()
   // page.close() // not working!
 
-  setTimeout(function () {
-    setTimeout(function () {
-      Log('Start opening: ' + url)
-      page.open(url, function (status) {
-        Log('Status of ' + url + ': ' + status)
-      })
-    }, 1)
-  }, 500)
+  Log('Start opening: ' + url)
+  page.open(url, function (status) {
+    Log('Status of ' + url + ': ' + status)
+  })
 }
 
 openNextPage({ categoryBegin: true })

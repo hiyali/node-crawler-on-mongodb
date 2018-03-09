@@ -6,8 +6,10 @@
   "scripts": {
     "api": "./node_modules/.bin/babel-node ./src/api.js",
     "crawl": "./node_modules/.bin/babel-node ./src/crawl.js",
-    "custom": "./node_modules/.bin/babel-node ./src/custom.js",
+    "crawl-levels": "./node_modules/.bin/babel-node ./src/crawl-levels.js",
+    "crawl-levels:dev": "./node_modules/.bin/babel-node ./src/crawl-levels.js --just-get-dev-file",
     "crawl:dev": "./node_modules/.bin/babel-node ./src/crawl.js --just-get-dev-file",
+    "custom": "./node_modules/.bin/babel-node ./src/custom.js",
     "example": "npm run phantomjs ./src/targets/example.back.js --dont-save-data",
     "phantomjs": "./node_modules/phantomjs-prebuilt/bin/phantomjs",
     "start": "npm run crawl && npm run api",
