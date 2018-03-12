@@ -20,7 +20,7 @@ const Log = function (text) {
 var IS_DEV_MODE = false
 var postEndpoint = null
 
-if (process.argv.indexOf('--dev-mode') > -1) {
+if (system.args.indexOf('--dev-mode') > -1) {
   IS_DEV_MODE = true
 }
 const postEndpointArgIdx = system.args.indexOf('--post-endpoint')

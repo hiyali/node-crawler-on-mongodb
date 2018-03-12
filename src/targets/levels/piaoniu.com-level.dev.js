@@ -76,7 +76,7 @@ const getLevelsCB = function (status, data, isLastOne, event) {
       date_step: date_step,
       date_time: event.specification,
       name: level.specification,
-      status: level.status, // FIXME: for another status
+      status: level.status, // TODO: for another status
       price: level.originPrice,
       real_price: level.lowPrice
     })
