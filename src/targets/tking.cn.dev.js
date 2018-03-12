@@ -4,7 +4,7 @@ const siteUrl = 'www.tking.cn'
 const url = 'https://www.tking.cn/list/'
 
 var IS_DEV_MODE = false
-if (process.argv.indexOf('--dev-mode') > -1) {
+if (system.args.indexOf('--dev-mode') > -1) {
   IS_DEV_MODE = true
 }
 
