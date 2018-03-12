@@ -3,10 +3,15 @@ const system = require('system')
 const siteUrl = 'www.tking.cn'
 const url = 'https://www.tking.cn/list/'
 
+var IS_DEV_MODE = false
+if (process.argv.indexOf('--dev-mode') > -1) {
+  IS_DEV_MODE = true
+}
+
 const city_list = [
-	// {"cityOID":3101,"cityName":"上海"}, 
-	// {"cityOID":1101,"cityName":"北京"}, 
-	// {"cityOID":4401,"cityName":"广州"},
+	{"cityOID":3101,"cityName":"上海"}, 
+	{"cityOID":1101,"cityName":"北京"}, 
+	{"cityOID":4401,"cityName":"广州"},
 	{"cityOID":4403,"cityName":"深圳"}
 ]
 
@@ -100,7 +105,7 @@ page.onLoadFinished = function (status) {
 
 const openNextPage = function () {
     // FIXME: Below statement for test, delete current_offset >= length_per_page * 2 for normal total crawler
-    if (current_offset >= length_per_page * 2) { // city next
+    if (IS_DEV_MODE && current_offset >= length_per_page * 2) { // city next
 	    openNextCity()
     } else { // page next
     	// construct url
