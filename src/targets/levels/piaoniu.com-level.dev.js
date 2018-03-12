@@ -61,8 +61,6 @@ page.onConsoleMessage = function (msg/*, lineNum, sourceId */) {
   Log(msg)
 }
 
-const result = []
-
 const pushResultsCB = function (status, result) {
   Log('The pushResultsCB function status: ' + result)
   phantom.exit(result === 'success' ? 0 : 1)
@@ -71,8 +69,9 @@ const pushResultsCB = function (status, result) {
 const getLevelsCB = function (status, data, isLastOne, event) {
   Log('The getLevelsCB status: ' + status + ' / got data length: ' + data.length)
 
+  const resultData = []
   data.forEach(function (level) {
-    result.push({
+    resultData.push({
       parent_ticket_id: _id,
       date_step: date_step,
       date_time: event.specification,
@@ -101,7 +100,7 @@ const getLevelsCB = function (status, data, isLastOne, event) {
           return window.callPhantom({ pageNext: true }, 'error', err)
         }
       })
-    }, postEndpoint, result)
+    }, postEndpoint, resultData)
   }
 }
 
