@@ -56,7 +56,7 @@ npm run start # 执行 爬虫 并 运行 api
 * ./node_modules/babel-cli/bin/babel-node.js ./src/** --**
 ```shell
 --dont-save-data # 不要把临时文件存到数据库里
---just-get-dev-file # 只取 *.dev.js
+--dev-mode # 只取 *.dev.js，并且限制了全量爬虫
 ```
 
 * ./node_modules/phantomjs-prebuilt/bin/phantomjs ./src/targets/**.js --**

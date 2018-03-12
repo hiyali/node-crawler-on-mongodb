@@ -6,9 +6,37 @@ import { Log, GetTargets, MongoDB } from './lib'
 
 const targetsDir = path.join(__dirname, 'targets/levels');
 
+let IS_DEV_MODE = false
+if (process.argv.indexOf('--dev-mode') > -1) {
+  IS_DEV_MODE = true
+}
+
 (async () => {
+  const getDateStepName = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+
+    const getTwoBits = (num) => {
+      if (num >= 10) {
+        return num
+      } else {
+        return '0' + num
+      }
+    }
+
+    let crawlNumber = 1 // default is 1
+    const crawlNumberArgIdx = process.argv.indexOf('--crawl-number')
+    if (crawlNumberArgIdx > -1 && process.argv.length > crawlNumberArgIdx + 1) {
+      crawlNumber = process.argv[crawlNumberArgIdx + 1]
+    } else {
+      Log('The crawlNumber was not given')
+    }
+    return `${year}${getTwoBits(month)}${getTwoBits(day)}_${crawlNumber}` // 20180309_1
+  }
   // Global variables
-  const date_step = '20180309_1' // FIXME: this must comes from cli
+  const date_step = getDateStepName()
   let targetsCount
   let queuedTargetsList = []
   let currentFileName
@@ -54,8 +82,10 @@ const targetsDir = path.join(__dirname, 'targets/levels');
       MongoDB.count({ site_url: currentSiteUrl }, resolve, { name: 'tickets' })
     })
     Log(`Found ${currentSiteRecordCount} records`)
-    // FIXME: test for 3 records blow
-    currentSiteRecordCount = currentSiteRecordCount > 3 ? 3 : currentSiteRecordCount
+
+    if (IS_DEV_MODE) {
+      currentSiteRecordCount = currentSiteRecordCount > 3 ? 3 : currentSiteRecordCount
+    }
     currentSiteRecordIndex = 0
 
     // Run record
@@ -73,7 +103,7 @@ const targetsDir = path.join(__dirname, 'targets/levels');
     const records = await new Promise((resolve, reject) => {
       MongoDB.find({ site_url: currentSiteUrl }, resolve, {
         name: 'tickets',
-        sort: '{"_id":1}',
+        sort: '{"_id":-1}',
         skip: currentSiteRecordIndex,
         limit: 1
       })

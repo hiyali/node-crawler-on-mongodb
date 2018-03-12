@@ -17,7 +17,12 @@ const Log = function (text) {
   console.log(now, '      ', text)
 }
 
+var IS_DEV_MODE = false
 var postEndpoint = null
+
+if (process.argv.indexOf('--dev-mode') > -1) {
+  IS_DEV_MODE = true
+}
 const postEndpointArgIdx = system.args.indexOf('--post-endpoint')
 if (postEndpointArgIdx > -1 && system.args.length > postEndpointArgIdx + 1) {
   postEndpoint = system.args[postEndpointArgIdx + 1]
@@ -106,8 +111,7 @@ const openNextPage = function (options) {
     options = {}
   }
 
-  // FIXME: Below statement for test, delete currentPageNum >= 2 for normal total crawler
-  if (currentPageNum >= 2 || options.categoryNext || options.categoryBegin) { // category next
+  if (IS_DEV_MODE && currentPageNum >= 2 || options.categoryNext || options.categoryBegin) { // category next
     if (categoryNameList.length === 0) {
       Log('Finished for ' + siteUrl)
       phantom.exit(0)

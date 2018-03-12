@@ -2,9 +2,9 @@ import fs from 'fs'
 
 import { Log } from './index.js'
 
-let justGetDevFile = false
-if (process.argv.indexOf('--just-get-dev-file') > -1) {
-  justGetDevFile = true
+let IS_DEV_MODE = false
+if (process.argv.indexOf('--dev-mode') > -1) {
+  IS_DEV_MODE = true
 }
 
 const getTargets = (targetsDir, callback) => {
@@ -21,7 +21,7 @@ const getTargets = (targetsDir, callback) => {
 
       if (fileName.charAt(0) === '.') continue // do not use hidden files
 
-      if (justGetDevFile && fileName.endsWith('.dev.js')) {
+      if (IS_DEV_MODE && fileName.endsWith('.dev.js')) {
         targetList.push(fileName)
       } else if (!fileName.endsWith('.back.js') && fileName.endsWith('.js')) { // for back files
         targetList.push(fileName)
