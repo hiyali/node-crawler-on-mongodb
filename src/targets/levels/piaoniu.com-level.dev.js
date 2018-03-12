@@ -54,31 +54,6 @@ if (urlArgIdx > -1 && system.args.length > urlArgIdx + 1) {
 // The logic of getting level's data is here
 // --------------------
 
-function waitFor (testFx, onReady, timeOutMillis) {
-  var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000, //< Default Max Timout is 3s
-  start = new Date().getTime(),
-  condition = false,
-  interval = setInterval(function() {
-    if ( (new Date().getTime() - start < maxtimeOutMillis) && !condition ) {
-      // If not time-out yet and condition not yet fulfilled
-      condition = (typeof(testFx) === 'string' ? eval(testFx) : testFx()) //< defensive code
-    } else {
-      if(!condition) {
-        // If condition still not fulfilled (timeout but condition is 'false')
-        Log('\'waitFor()\' timeout')
-        phantom.exit(1)
-      } else {
-        // Condition fulfilled (timeout and/or condition is 'true')
-        Log('\'waitFor()\' finished in ' + (new Date().getTime() - start) + 'ms.')
-        //< Do what it's supposed to do once the condition is fulfilled
-        typeof(onReady) === 'string' ? eval(onReady) : onReady()
-        //< Stop this interval
-        clearInterval(interval)
-      }
-    }
-  }, 2 * 1000) //< repeat check every 250ms
-}
-
 page.settings.clearMemoryCaches = true
 // page.viewportSize = { width: 1200, height: 1000 }
 
@@ -86,108 +61,98 @@ page.onConsoleMessage = function (msg/*, lineNum, sourceId */) {
   Log(msg)
 }
 
+const result = []
+
+const pushResultsCB = function (status, result) {
+  Log('The pushResultsCB function status: ' + result)
+  phantom.exit(result === 'success' ? 0 : 1)
+}
+
+const getLevelsCB = function (status, data, isLastOne, event) {
+  Log('The getLevelsCB status: ' + status + ' / got data length: ' + data.length)
+
+  data.forEach(function (level) {
+    result.push({
+      parent_ticket_id: _id,
+      date_step: date_step,
+      date_time: event.specification,
+      name: level.specification,
+      status: level.status, // FIXME: for another status
+      price: level.originPrice,
+      real_price: level.lowPrice
+    })
+  })
+
+  if (isLastOne) {
+    page.onCallback = pushResultsCB
+
+    Log('Prepare for save into the server: ' + postEndpoint)
+    page.evaluate(function (postEndpoint, result) {
+      $.ajax({
+        type: 'POST',
+        url: postEndpoint,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(result),
+        success: function (data) {
+          return window.callPhantom({ pageNext: true }, 'success', data)
+        },
+        error: function (err) {
+          return window.callPhantom({ pageNext: true }, 'error', err)
+        }
+      })
+    }, postEndpoint, result)
+  }
+}
+
+const getEventsCB = function (status, data) {
+  Log('The getEventsCB status: ' + status + ' / got data length: ' + data.length)
+
+  if (data.events.length && data.events.length > 0) {
+    data.events.forEach(function (event, index) {
+      page.onCallback = getLevelsCB
+
+      page.evaluate(function (event, isLastOne) {
+        $.ajax({
+          type: 'GET',
+          url: 'https://www.piaoniu.com/api/v1/ticketCategories.json?b2c=true&eventId=' + event.id,
+          contentType: 'application/json; charset=utf-8',
+          success: function (_data) {
+            return window.callPhantom('success', _data, isLastOne, event)
+          },
+          error: function (err) {
+            return window.callPhantom('error', err, isLastOne, event)
+          }
+        })
+      }, event, index === data.events.length - 1)
+    })
+  } else {
+    Log('Information not enough, data is empty')
+    // TODO: we can update ticket info here
+    phantom.exit(0)
+  }
+}
+
 page.onLoadFinished = function () {
   page.includeJs('https://cdn.bootcss.com/jquery/1.12.4/jquery.js', function () {
-    // waitFor first data is arrived
-    waitFor(function () {
-      return page.evaluate(function () {
-        const countList = $('.ticket-info .b2c-num-picker .item')
-        console.log('----------- countList.length', countList.length)
-        return countList.length > 0 ? true : false
-      })
-    }, function () {
-      page.onCallback = function (status, result) {
-        Log('The onCallback function ' + status + ': ' + JSON.stringify(result))
+    page.onCallback = getEventsCB
 
-        Log('Got result\'s length: ' + result.length)
-
-        if (result && result.length > 0) {
-          Log('Prepare for save into the server: ' + postEndpoint)
-
-          page.onCallback = function (status, data) {
-            Log('The onCallback function ' + status + ': ' + JSON.stringify(data))
-            phantom.exit(0)
-          }
-
-          page.evaluate(function (postEndpoint, result) {
-            $.ajax({
-              type: 'POST',
-              url: postEndpoint,
-              contentType: 'application/json; charset=utf-8',
-              dataType: 'json',
-              data: JSON.stringify(result),
-              success: function (data) {
-                return window.callPhantom('success', data)
-              },
-              error: function (err) {
-                return window.callPhantom('error', err)
-              }
-            })
-          }, postEndpoint, result)
-        } else {
-          Log('Information not enough, result is empty')
-          phantom.exit(0)
+    // get Result
+    const splittedUrl = url.split('/')
+    const activityId = splittedUrl[splittedUrl.length - 1]
+    page.evaluate(function (activityId) {
+      $.ajax({
+        type: 'GET',
+        url: 'https://www.piaoniu.com/api/v1/activities/' + activityId + '.json',
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          return window.callPhantom('success', data)
+        },
+        error: function (err) {
+          return window.callPhantom('error', err)
         }
-      }
-
-      // get Result
-      Log('Starts to getting result')
-      page.evaluate(function (_id, date_step) {
-        const resultData = []
-        const ticketArea = $('.ticket-info')[0]
-        console.log('------------ $(ticketArea).text()', $(ticketArea).text())
-        const eventList = $(ticketArea).find('.events-picker .item')
-        console.log('------------ eventList.length', eventList.length)
-
-        $(eventList).each(function () {
-          const event = this
-          $(event).click()
-
-          const retryEvent = function (retryEventTimes) {
-            // wait for have some item of levelList
-            const levelList = $(ticketArea).find('.ticket-category .item')
-            console.log('------------ levelList.length', levelList.length)
-            if ((!levelList || levelList.length === 0) && retryEventTimes > 0) {
-              setTimeout(function () {
-                retryEvent(retryEventTimes--)
-              }, 330)
-              return
-            }
-
-            $(levelList).each(function () {
-              const level = this
-              $(level).click()
-
-              const retryLevel = function (retryLevelTimes) {
-                // wait for have some item of countList
-                const countList = $(ticketArea).find('.b2c-num-picker .item')
-                if ((!countList || countList.length === 0) && retryLevelTimes > 0) {
-                  setTimeout(function () {
-                    retryLevel(retryLevelTimes--)
-                  }, 200)
-                  return
-                }
-
-                resultData.push({
-                  parent_ticket_id: _id,
-                  date_step: date_step,
-                  date_time: $(event).text(),
-                  name: $(level).text(),
-                  status: $(ticketArea).find('.btn-submit').text(), // FIXME: for another status
-                  price: parseInt($(level).text()),
-                  real_price: $(ticketArea).find('.price').text(),
-                })
-              }
-              retryLevel(5)
-            }) // levelList each
-          }
-          retryEvent(3)
-        }) //eventList each done
-        setTimeout(function () {
-          window.callPhantom('success', resultData)
-        }, 200)
-      }, _id, date_step)
-    }, 10 * 1000)
+      })
+    }, activityId)
   })
 }
 

@@ -73,7 +73,7 @@ const targetsDir = path.join(__dirname, 'targets/levels');
     const records = await new Promise((resolve, reject) => {
       MongoDB.find({ site_url: currentSiteUrl }, resolve, {
         name: 'tickets',
-        sort: '{"_id":-1}',
+        sort: '{"_id":1}',
         skip: currentSiteRecordIndex,
         limit: 1
       })
