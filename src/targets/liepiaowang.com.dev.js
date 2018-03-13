@@ -1,6 +1,6 @@
 const page = require('webpage').create()
 const system = require('system')
-const siteUrl = 'm.liepiaowang.com'
+const siteUrl = 'liepiaowang.com'
 const search_url = 'http://m.liepiaowang.com/api/hunt/scenarios/inSale'
 const url = 'http://m.liepiaowang.com/app/home'
 
