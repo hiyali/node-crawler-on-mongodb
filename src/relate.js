@@ -1,4 +1,4 @@
-import leven from 'leven'
+import distance from 'jaro-winkler' // leven
 
 import { Log, GetTargets, MongoDB } from './lib'
 
@@ -61,7 +61,7 @@ import { Log, GetTargets, MongoDB } from './lib'
    */
   const nextRelatedRecord = async (mainRecord, site_url, relatedTicketRecord) => {
     let similarRecord
-    let smallestDistance
+    let similarityNum
     for (let i = 0; i < relatedTicketRecord; i++) {
       const relatedRecords = await new Promise((resolve, reject) => {
         MongoDB.find({
@@ -75,8 +75,8 @@ import { Log, GetTargets, MongoDB } from './lib'
         })
       })
       const distanceResult = getDistance(mainRecord, relatedRecords[0])
-      if (distanceResult.canUse && (!smallestDistance || smallestDistance > distanceResult.distance)) {
-        smallestDistance = distanceResult.distance
+      if (distanceResult.canUse && (!similarityNum || similarityNum > distanceResult.distance)) {
+        similarityNum = distanceResult.num
         similarRecord = relatedRecords[0]
       }
     }
@@ -104,11 +104,11 @@ import { Log, GetTargets, MongoDB } from './lib'
   const getDistance = (mainRecord, relatedRecord) => {
     const mainText = getFieldsStr(mainRecord)
     const relatedText = getFieldsStr(relatedRecord)
-    const distance = leven(mainText, relatedText)
+    const num = distance(mainText, relatedText)
 
     return {
-      distance,
-      canUse: mainText.length > distance
+      num,
+      canUse: num > 0.5
     }
   }
 })()
