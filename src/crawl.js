@@ -11,6 +11,12 @@ const targetsDir = path.join(__dirname, 'targets')
   return path.join(__dirname, '../temp/' + targetFileName + '.result.txt')
 } // */
 
+let IS_DEV_MODE = false
+if (process.argv.indexOf('--dev-mode') > -1) {
+  IS_DEV_MODE = true
+}
+
+
 let queuedTargetsList = []
 const next = () => {
   const length = queuedTargetsList.length
@@ -60,6 +66,9 @@ const runTarget = (fileName = 'example.back.js') => {
     'http://crawler_docker_container:5555/api/tickets',
     '--load-images=yes' // for improve the performance
   ]
+  if (IS_DEV_MODE) {
+    childArgs.push('--dev-mode')
+  }
 
   // Log('Start run target: ', fileName)
   childProc.execFile(binPath, childArgs, function(err, stdout, stderr) {
