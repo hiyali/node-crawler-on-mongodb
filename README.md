@@ -43,7 +43,9 @@ npm start
 
 ```shell
 npm run api # 只有 api 运行
-npm run crawl # 只有 爬虫运行
+npm run crawl # 只有 targets 下的爬虫运行
+npm run crawl-levels # 只有 targets/levels 下的爬虫运行
+npm run relate # 给数据做关联
 npm run custom # 只有 custom.js 运行
 npm run dev # 执行 *.dev.js 的爬虫文件
 npm run example # 执行 example.back.js 爬虫示例，无写入到数据库的步骤
