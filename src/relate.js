@@ -6,12 +6,16 @@ import { Log, GetTargets, MongoDB } from './lib'
   const mainSiteUrl = 'liepiaowang.com'
   let mainSiteRecordIndex = 0
   const mainSiteRecordCount = await new Promise((resolve, reject) => {
-    MongoDB.count({ site_url: mainSiteUrl }, resolve, { name: 'tickets' })
+    MongoDB.count({
+      human_matched: { $ne: true },
+      site_url: mainSiteUrl
+    }, resolve, { name: 'tickets' })
   })
   Log(`Found ${mainSiteRecordCount} records`)
 
   const relatedSiteUrlList = ['piaoniu.com', 'tking.cn']
   let relatedSiteIndex
+  let matchedRelatedSiteNum
 
   /*
    * Main loop : mainTicketRecord one By one
@@ -27,6 +31,7 @@ import { Log, GetTargets, MongoDB } from './lib'
     const mainRecords = await new Promise((resolve, reject) => {
       MongoDB.find({
         // _id: new MongoDB.ObjectId('5aa8943edb90e25cd6edde5d'), // FIXME: delete
+        human_matched: { $ne: true },
         site_url: mainSiteUrl
       }, resolve, {
         name: 'tickets',
@@ -37,6 +42,7 @@ import { Log, GetTargets, MongoDB } from './lib'
     })
     mainSiteRecordIndex++
     relatedSiteIndex = 0 // default
+    matchedRelatedSiteNum = 0
 
     nextRelatedSite(mainRecords[0])
   }
@@ -47,6 +53,15 @@ import { Log, GetTargets, MongoDB } from './lib'
    */
   const nextRelatedSite = async (mainRecord) => {
     if (relatedSiteIndex >= relatedSiteUrlList.length) {
+      // save the mainRecord is auto_matched already
+      if (matchedRelatedSiteNum === relatedSiteUrlList.length) {
+        MongoDB.updateMany({
+          _id: new MongoDB.ObjectId(mainRecord._id)
+        }, { $set: { auto_matched: true } }, { w: 1 }, (result) => {
+          Log(result)
+        }, { name: 'tickets' })
+      }
+
       nextMainRecord()
       return
     }
@@ -103,6 +118,8 @@ import { Log, GetTargets, MongoDB } from './lib'
         }, { w: 1 }, resolve, { name: 'tickets' })
       })
       Log(saveResult)
+
+      matchedRelatedSiteNum++
     }
 
     nextRelatedSite(mainRecord)
