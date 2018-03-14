@@ -74,7 +74,8 @@ const getLevelsCB = function (status, data, isLastOne, event) {
     resultData.push({
       parent_ticket_id: _id,
       date_step: date_step,
-      date_time: event.specification,
+      date_name: event.specification,
+      date_time: (new Date(event.start)).getTime(),
       name: level.specification,
       status: level.status, // TODO: for another status
       price: level.originPrice,
