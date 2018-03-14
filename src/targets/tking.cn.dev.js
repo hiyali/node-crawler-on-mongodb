@@ -12,7 +12,8 @@ const city_list = [
 	{"cityOID":3101,"cityName":"上海"}, 
 	{"cityOID":1101,"cityName":"北京"}, 
 	{"cityOID":4401,"cityName":"广州"},
-	{"cityOID":4403,"cityName":"深圳"}
+	{"cityOID":4403,"cityName":"深圳"},
+	{"cityOID":6101,"cityName":"西安"}
 ]
 
 const length_per_page = 10
@@ -44,11 +45,13 @@ page.onLoadFinished = function (status) {
 			const resultData = []
 		    if (lists && lists.length > 0) {
 		        $(lists).each(function (index) {
-		        	const titleEl = $(this).find('.show-name')
-			        if (titleEl.text() && titleEl.text() !== '') {
+		        	const titleEl = $(this).find('.show-name').text()
+		        	var city_name = titleEl.substring(titleEl.indexOf('【') + 1, titleEl.indexOf('】') - 1)
+		        	console.log(titleEl + '的城市为：' + city_name)
+			        if (titleEl && titleEl !== '') {
 				        resultData.push({
-				        	is_pivotal: false,
-				            title: titleEl.text(),
+				            title: titleEl,
+				            city_name: city_name,
 				            date_time: $(this).find('.show-time').text(),
 				            status: $(this).find('.selling').text(),
 				            location: $(this).find('.show-addr').text(),
