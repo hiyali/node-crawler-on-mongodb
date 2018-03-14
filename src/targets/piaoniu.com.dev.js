@@ -5,7 +5,7 @@ const page = webpage.create()
 const url = 'https://www.piaoniu.com/{CATEGORY_NAME}-all/hottest/p{PAGE_NUM}'
 const siteUrl = 'piaoniu.com'
 
-var categoryNameList = ['sh', 'bj', 'gz', 'sz', 'cd', 'cq', 'tj', 'hz', 'nj', 'wh', 'cs'] // 长沙 cs, 成都 cd ...
+var categoryNameList = ['sh'] //, 'bj', 'gz', 'sz', 'cd', 'cq', 'tj', 'hz', 'nj', 'wh', 'cs'] // 长沙 cs, 成都 cd ...
 var currentPageNum = 1
 var currentCategoryName = ''
 
@@ -49,18 +49,22 @@ page.onLoadFinished = function () {
       const resultData = []
       if (lists && lists.length > 0) {
         $(lists).each(function () {
-          const priceContEl = $(this).find('.price-cont')
-          if (priceContEl.text() && priceContEl.text() !== '') {
+          const priceCont = $(this).find('.price-cont').text()
+          const title = $(this).find('.title a').text()
+          const city_name = title.substring(title.indexOf('[') + 1, title.indexOf(']') - 1)
+          if (priceCont && priceCont !== '') {
             resultData.push({
-              is_pivotal: false, // hunt ticket's information is pivotal
               related_ticket_id: null,
-              title: $(this).find('.title a').text(),
+              title,
               date_time: $(this).find('.time').text(),
-              status: priceContEl.text(),
+              status: priceCont,
               location: $(this).find('.venue').text(),
               url: 'https://www.piaoniu.com' + $(this).find('>a').attr('href'),
               image_url: $(this).find('.poster').attr('src'),
-              site_url: 'piaoniu.com' // siteUrl // can't used in evaluate function?
+              site_url: 'piaoniu.com', // siteUrl // can't used in evaluate function?
+              city_name,
+              auto_matched: false,
+              human_matched: false
             })
           }
         })
