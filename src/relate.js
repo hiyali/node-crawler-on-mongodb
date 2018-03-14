@@ -17,23 +17,30 @@ import { Log, GetTargets, MongoDB } from './lib'
    * Main loop : mainTicketRecord one By one
    */
   const nextMainRecord = async () => {
+    //     if (mainSiteRecordIndex >= 1) { // FIXME: for test
+    //       return
+    //     }
     if (mainSiteRecordIndex >= mainSiteRecordCount) {
       return
     }
 
     const mainRecords = await new Promise((resolve, reject) => {
-      MongoDB.find({ site_url: mainSiteUrl }, resolve, {
+      MongoDB.find({
+        // _id: new MongoDB.ObjectId('5aa8943edb90e25cd6edde5d'), // FIXME: delete
+        site_url: mainSiteUrl
+      }, resolve, {
         name: 'tickets',
         sort: '{"_id":-1}',
         skip: mainSiteRecordIndex,
         limit: 1
       })
     })
-    currentSiteRecordIndex++
+    mainSiteRecordIndex++
     relatedSiteIndex = 0 // default
 
     nextRelatedSite(mainRecords[0])
   }
+  nextMainRecord()
 
   /*
    * Second loop : relatedSiteLoop one By one (has mainTicketRecord)
@@ -48,24 +55,24 @@ import { Log, GetTargets, MongoDB } from './lib'
     relatedSiteIndex++
     const relatedSiteRecordCount = await new Promise((resolve, reject) => {
       MongoDB.count({
-        // TODO: related_ticket_id not null
+        related_ticket_id: { $in: [ '', null, false ] },
         site_url
       }, resolve, { name: 'tickets' })
     })
 
-    nextRelatedRecord(mainRecord, site_url, relatedSiteRecordCount)
+    allRelatedRecord(mainRecord, site_url, relatedSiteRecordCount)
   }
 
   /*
    * Third loop : relatedTicketRecord one By one
    */
-  const nextRelatedRecord = async (mainRecord, site_url, relatedTicketRecord) => {
+  const allRelatedRecord = async (mainRecord, site_url, relatedTicketRecord) => {
     let similarRecord
     let similarityNum
     for (let i = 0; i < relatedTicketRecord; i++) {
       const relatedRecords = await new Promise((resolve, reject) => {
         MongoDB.find({
-          // TODO: related_ticket_id not null
+          related_ticket_id: { $in: [ '', null, false ] },
           site_url
         }, resolve, {
           name: 'tickets',
@@ -74,16 +81,22 @@ import { Log, GetTargets, MongoDB } from './lib'
           limit: 1
         })
       })
+      if (relatedRecords.length === 0) {
+        Log('The allRelatedRecord function is fucked up, site_url: ' + site_url + ' / i:' + i)
+        return
+      }
+
       const distanceResult = getDistance(mainRecord, relatedRecords[0])
-      if (distanceResult.canUse && (!similarityNum || similarityNum > distanceResult.distance)) {
+      if (distanceResult.canUse && (!similarityNum || distanceResult.num > similarityNum)) {
         similarityNum = distanceResult.num
         similarRecord = relatedRecords[0]
       }
     }
 
+    Log('The mainRecord._id: ' + mainRecord._id + '(' + mainRecord.title + ') for allRelatedRecord')
     if (similarRecord) {
-      Log('Found that similar ticket, mainRecord.title: ' + mainRecord.title + ' / similarRecord.title: ' + similar.title)
-      Log('mainRecord._id: ' + mainRecord._id + ' / similarRecord._id: ' + similar._id)
+      Log('Found! the similarityNum: ' + similarityNum)
+      Log('The similarRecord._id: ' + similarRecord._id + '(' + similarRecord.title + ')')
       const saveResult = await new Promise((resolve, reject) => {
         MongoDB.updateOne({ _id: new MongoDB.ObjectId(similarRecord._id) }, {
           $set: { related_ticket_id: mainRecord._id }
@@ -92,23 +105,21 @@ import { Log, GetTargets, MongoDB } from './lib'
       Log(saveResult)
     }
 
-    nextRelatedSite()
+    nextRelatedSite(mainRecord)
   }
 
   /*
    * Get distance : one mainTicketRecord with one relatedTicketRecord
    */
-  const getFieldsStr = (record) => {
-    return record.title + record.location + record.date_time
-  }
   const getDistance = (mainRecord, relatedRecord) => {
-    const mainText = getFieldsStr(mainRecord)
-    const relatedText = getFieldsStr(relatedRecord)
-    const num = distance(mainText, relatedText)
+    const titleNum = distance(mainRecord.title, relatedRecord.title)
+    const locationNum = distance(mainRecord.location, relatedRecord.location)
+    const date_timeNum = distance(mainRecord.date_time, relatedRecord.date_time)
 
+    const avrageNum = titleNum * 0.6 + locationNum * 0.25 + date_timeNum * 0.15
     return {
-      num,
-      canUse: num > 0.5
+      num: avrageNum,
+      canUse: avrageNum > 0.7
     }
   }
 })()
