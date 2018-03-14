@@ -37,9 +37,9 @@ const saveScenarioList = function (status, scenarioList) {
 	const result = []
 	scenarioList.forEach(function(scenario) {
 		result.push({
-			is_pivotal: true, // hunt ticket's information is pivotal
             related_ticket_id: null,
             title: scenario.name,
+            city_name: scenario.city,
             date_time: scenario.showDateInfo,
             status: '出售中',
             location: scenario.placeName,
