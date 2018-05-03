@@ -2,6 +2,7 @@ import { MongoClient, ObjectID } from 'mongodb'
 import test from 'assert'
 
 import { Log } from './index.js'
+// const Log = () => {} // Use this Log function logs will disappear
 
 // Connection URL
 const url = 'mongodb://crawler_docker_container:27188/huntCrawler'
