@@ -5,10 +5,6 @@ const page = webpage.create()
 const url = 'https://www.piaoniu.com/{CATEGORY_NAME}-all/hottest/p{PAGE_NUM}'
 const siteUrl = 'piaoniu.com'
 
-var categoryNameList = ['sh'] //, 'bj', 'gz', 'sz', 'cd', 'cq', 'tj', 'hz', 'nj', 'wh', 'cs'] // 长沙 cs, 成都 cd ...
-var currentPageNum = 1
-var currentCategoryName = ''
-
 const Log = function (text) {
   const _D = new Date()
   const date = _D.getFullYear() + '/' + (_D.getMonth() + 1) + '/' + _D.getDate()
@@ -31,6 +27,13 @@ if (postEndpointArgIdx > -1 && system.args.length > postEndpointArgIdx + 1) {
   Log('The postEndpoint is not found!')
   phantom.exit(1)
 }
+
+var categoryNameList = ['sh', 'bj', 'gz', 'sz', 'cd', 'cq', 'tj', 'hz', 'nj', 'wh', 'cs'] // 长沙 cs, 成都 cd ...
+if (IS_DEV_MODE) {
+  categoryNameList = ['sh', 'bj']
+}
+var currentPageNum = 1
+var currentCategoryName = ''
 
 page.settings.clearMemoryCaches = true
 // page.viewportSize = { width: 1200, height: 1000 }
