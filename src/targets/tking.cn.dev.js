@@ -47,7 +47,6 @@ page.onLoadFinished = function (status) {
 		        $(lists).each(function (index) {
 		        	const titleEl = $(this).find('.show-name').text()
 		        	var city_name = titleEl.substring(titleEl.indexOf('【') + 1, titleEl.indexOf('】') - 1)
-		        	console.log(titleEl + '的城市为：' + city_name)
 			        if (titleEl && titleEl !== '') {
 				        resultData.push({
 				            title: titleEl,

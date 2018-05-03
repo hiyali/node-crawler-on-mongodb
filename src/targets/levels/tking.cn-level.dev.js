@@ -64,14 +64,14 @@ const setLevelInfo = function (status, levelList) {
 			result.push({
 				parent_ticket_id: _id,
 			    date_step: date_step,
-			    date_time: current_scenario_date.showTime,
+			    date_name: current_scenario_date.sessionName,
+			    date_time: current_scenario_date.showTime_long,
 			    name: level.originalPrice + level.comments,
 			    status: level.tickets.length > 0 ? '出售中' : '无票',
 			    price: level.originPrice,
 			    real_price: level.salePrice
 			})
 		})
-		Log(JSON.stringify(result))
 		page.onCallback = openNextDate
 
 	    Log('Prepare for save into the server: ' + postEndpoint)

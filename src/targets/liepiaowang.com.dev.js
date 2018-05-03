@@ -37,9 +37,9 @@ const saveScenarioList = function (status, scenarioList) {
   const result = []
   scenarioList.forEach(function(scenario) {
     result.push({
-      is_pivotal: true, // hunt ticket's information is pivotal
       related_ticket_id: null,
       title: scenario.name,
+      city_name: scenario.city,
       date_time: scenario.showDateInfo,
       status: '出售中',
       location: scenario.placeName,
@@ -50,21 +50,22 @@ const saveScenarioList = function (status, scenarioList) {
   })
   page.onCallback = openNextPage
   Log('Prepare for save into the server: ' + postEndpoint)
-    page.evaluate(function (postEndpoint, result) {
-      $.ajax({
-        type: 'POST',
-        url: postEndpoint,
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: JSON.stringify(result),
-        success: function (data) {
-          return window.callPhantom('success')
-        },
-        error: function (err) {
-          return window.callPhantom('error')
-        }
-      })
-    }, postEndpoint, result)
+
+  page.evaluate(function (postEndpoint, result) {
+    $.ajax({
+      type: 'POST',
+      url: postEndpoint,
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      data: JSON.stringify(result),
+      success: function (data) {
+        return window.callPhantom('success')
+      },
+      error: function (err) {
+        return window.callPhantom('error')
+      }
+    })
+  }, postEndpoint, result)
 }
 
 page.onLoadFinished = function (status) {

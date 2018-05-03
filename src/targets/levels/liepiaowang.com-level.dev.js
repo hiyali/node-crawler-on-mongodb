@@ -73,7 +73,8 @@ const setLevelInfo = function (status, data) {
 				result.push({
 					parent_ticket_id: _id,
 				    date_step: date_step,
-				    date_time: date.showDateBegin,
+				    date_name: date.name
+				    date_time: (new Date(date.showDateBegin)).getTime(),
 				    name: level.name,
 				    status: '出售中',
 				    price: level.price,
