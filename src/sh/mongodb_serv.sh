@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # foreground
-# mongod --dbpath $(PWD)/db --port 27188
-mongod --dbpath /hunt/db --port 27188
+# mongod --dbpath $(PWD)/db --port 27017
+mongod --dbpath /yt-db/db --port 27017
 
 # background
-# mongod --fork --dbpath /hunt/db --port 27188 --logpath /hunt/log/mongod.log
+# mongod --fork --dbpath /yt-db/db --port 27017 --logpath /yt-db/log/mongod.log
 # sleep 5
 
