@@ -26,20 +26,26 @@ const getConf = () => {
       category: urlConf.category,
     },
     waitForSelector: '#contents',
-    createIndexColumn: 'videoId',
+    createIndexOption: {
+      category: 1,
+      dateStep: 1,
+      sortNum: 1,
+      videoId: 1,
+    },
   }
 }
 
 const parseData = async ($, dataMark = {}) => {
   const resultData = []
   await $(targetSelector).each(function(index) {
-    const thumbnail = $(this).find('.yt-img-shadow').attr('src')
+    const thumbnail = $(this).find('.yt-img-shadow').attr('src').split('?')[0]
     const data = {
       thumbnail,
       title: $(this).find('.title').text(),
       artist: $(this).find('.secondary-flex-columns yt-formatted-string:first-child').text().replace('\n', ''),
       // time: $(this).find('> :last-child yt-formatted-string').text().replace('\n', ''), // do'nt appear in iPad...
-      videoId: thumbnail ? thumbnail.split('/')[4] : ''
+      videoId: thumbnail ? thumbnail.split('/')[4] : '',
+      sortNum: index + 1,
     }
     if (thumbnail.indexOf('jpg') > -1 && strExist(data.videoId) && strExist(data.title)) {
       resultData.push({ ...data, ...dataMark })

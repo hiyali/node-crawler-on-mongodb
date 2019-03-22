@@ -24,11 +24,35 @@ const postResults = (result, postEndpoint) => {
   })
 }
 
-const createMongoDBIndex = (createIndexColumn) => new Promise((resolve, reject) => {
-  MongoDB.createIndex(createIndexColumn, (result) => {
+const getDateStepName = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const day = now.getDate()
+
+  const getTwoBits = (num) => {
+    if (num >= 10) {
+      return num
+    } else {
+      return '0' + num
+    }
+  }
+
+  let crawlNumber = 1 // default is 1
+  const crawlNumberArgIdx = process.argv.indexOf('--crawl-number')
+  if (crawlNumberArgIdx > -1 && process.argv.length > crawlNumberArgIdx + 1) {
+    crawlNumber = process.argv[crawlNumberArgIdx + 1]
+  } else {
+    Log('The crawlNumber was not given')
+  }
+  return `${year}${getTwoBits(month)}${getTwoBits(day)}_${crawlNumber}` // 20180309_1
+}
+
+const createMongoDBIndex = (createIndexOption) => new Promise((resolve, reject) => {
+  MongoDB.createIndex(createIndexOption, (result) => {
     Log('MongoDB result:', result)
     resolve(result)
-  }, { unique: true, background: true, w: 1, dropDups: true })
+  }, { unique: true, background: true })
 })
 
 async function scrollPageToBottom(page, scrollStep = 250, scrollDelay = 100) {
@@ -99,21 +123,23 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
 
   let conf = getConf()
   while (conf) {
-    Log('Getting crawl with conf.url:', conf.url)
+    Log('Start crawl to category:', conf.dataMark.category)
 
     const page = await browser.newPage()
     await page.emulate(device)
     // await page.setUserAgent(localDevice.userAgent)
     // await page.setViewport(localDevice.viewport)
 
+    Log('Prepare to open:', conf.url)
     const $target = await getSiteTarget(page, conf.url, conf.waitForSelector, waitForTimeout)
-    const result = await parseData($target, conf.dataMark)
+    const dateStep = getDateStepName()
+    const result = await parseData($target, { ...conf.dataMark, ...{ dateStep }})
     Log('Result length:', result.length)
 
     if (!DONT_SAVE_DATA) {
       const success = await postResults(result, postEndpoint).catch(err => Log('Err - postResults: ', err))
       if (success) {
-        await createMongoDBIndex(conf.createIndexColumn)
+        await createMongoDBIndex(conf.createIndexOption)
       }
     }
 
