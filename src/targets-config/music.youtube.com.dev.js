@@ -7,6 +7,9 @@ const urlConfList = [
   { id: 'PL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM', category: 'top-100-world' },
   { id: 'PLFgquLnL59anX9MlB94jIg69rR6FyzqQP', category: 'trending-20-us' },
   { id: 'PL4fGSI1pDJn69On1f-8NAvX_CYlx7QyZc', category: 'top-100-us' },
+  { id: 'PLFgquLnL59an-05S-d-D1md6qdfjC0GOO', category: 'top-tracks-turkey' },
+  { id: 'PLFgquLnL59alcyTM2lkWJU34KtfPXQDaX', category: 'top-tracks' },
+  { id: 'PLFgquLnL59alkIbVx9idhCZ0oRQGV5C29', category: 'latest' },
 ]
 const targetSelector = '#contents.ytmusic-playlist-shelf-renderer .ytmusic-playlist-shelf-renderer'
 
