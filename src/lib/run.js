@@ -48,7 +48,7 @@ const getDateStepName = () => {
   return `${year}${getTwoBits(month)}${getTwoBits(day)}_${crawlNumber}` // 20180309_1
 }
 
-const createMongoDBIndex = (createIndexOption) => new Promise((resolve, reject) => {
+const createMongoDBIndex = (createIndexOption) => new Promise((resolve) => { // , reject
   MongoDB.createIndex(createIndexOption, (result) => {
     Log('MongoDB result:', result)
     resolve(result)
@@ -122,16 +122,32 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
     devices['iPad Pro']
 
   let conf = getConf()
+  let retryTimes = 5
   while (conf) {
     Log('Start crawl to category:', conf.dataMark.category)
 
     const page = await browser.newPage()
     await page.emulate(device)
+    await page.setCacheEnabled(false)
     // await page.setUserAgent(localDevice.userAgent)
     // await page.setViewport(localDevice.viewport)
 
     Log('Prepare to open:', conf.url)
     const $target = await getSiteTarget(page, conf.url, conf.waitForSelector, waitForTimeout)
+      .catch(err => {
+        Log('Err - getSiteTarget: ', err);
+        (async () => {
+          await page.close()
+        })()
+        return 'retry'
+      })
+
+    if ($target === 'retry' && retryTimes > 0) {
+      Log('Run: retring... ', retryTimes)
+      retryTimes--
+      continue // retry
+    }
+
     const dateStep = getDateStepName()
     const result = await parseData($target, { ...conf.dataMark, ...{ dateStep }})
     Log('Result length:', result.length)
