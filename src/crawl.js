@@ -9,7 +9,10 @@ import * as ytMusic from './targets-config/music.youtube.com.dev'
 const IS_DEV_MODE = process.argv.indexOf('--dev-mode') > -1
 
 const RunConf = {
-  postEndpoint: 'http://localhost:5556/api/music',
+  postEndpoint: {
+    list: 'http://localhost:5556/api/music',
+    category: 'http://localhost:5556/api/category',
+  },
   waitForTimeout: 20 * 1000,
   RUN_ONCE: IS_DEV_MODE === true,
   DONT_SAVE_DATA: process.argv.indexOf('--dont-save-data') > -1,

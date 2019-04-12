@@ -15,12 +15,15 @@ const localDevice = {
   userAgent: 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36',
 } // */
 
-const postResults = (result, postEndpoint) => {
+const postListResults = (results, listEndpoint) => {
   return new Promise((resolve, reject) => {
-    axios
-      .post(postEndpoint, result)
-      .then(resolve)
-      .catch(reject)
+    axios.post(listEndpoint, results).then(resolve).catch(reject)
+  })
+}
+
+const updateCategoryData = (data, categoryEndpoint) => {
+  return new Promise((resolve, reject) => {
+    axios.put(categoryEndpoint, data).then(resolve).catch(reject)
   })
 }
 
@@ -149,13 +152,19 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
     }
 
     const dateStep = getDateStepName()
-    const result = await parseData($target, { ...conf.dataMark, ...{ dateStep }})
-    Log('Result length:', result.length)
+    const results = await parseData($target, { ...conf.dataMark, ...{ dateStep }})
+    Log('Result length:', results.length)
 
     if (!DONT_SAVE_DATA) {
-      const success = await postResults(result, postEndpoint).catch(err => Log('Err - postResults: ', err))
-      if (success) {
+      const postListSuccess = await postListResults(results, postEndpoint.list).catch(err => Log('Err - postListResults: ', err))
+      if (postListSuccess) {
         await createMongoDBIndex(conf.createIndexOption)
+
+        if (results.length > 0) {
+          Log('Prepare to call updateCategoryData with:', JSON.stringify(results[0]))
+          await updateCategoryData(results[0], postEndpoint.category)
+            .catch(err => Log('Err - postCategoryResults: ', err))
+        }
       }
     }
 
