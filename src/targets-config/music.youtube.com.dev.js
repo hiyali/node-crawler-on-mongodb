@@ -4,12 +4,18 @@ import { Log } from '../lib'
 const siteUrl = 'music.youtube.com'
 const urlModel = 'https://music.youtube.com/playlist?list={LIST_ID}'
 const urlConfList = [
+  { id: 'PLFgquLnL59alcyTM2lkWJU34KtfPXQDaX', category: 'top-tracks' },
+  { id: 'PLFgquLnL59alkIbVx9idhCZ0oRQGV5C29', category: 'latest' },
+
   { id: 'PL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM', category: 'top-100-world' },
   { id: 'PLFgquLnL59anX9MlB94jIg69rR6FyzqQP', category: 'trending-20-us' },
   { id: 'PL4fGSI1pDJn69On1f-8NAvX_CYlx7QyZc', category: 'top-100-us' },
   { id: 'PLFgquLnL59an-05S-d-D1md6qdfjC0GOO', category: 'top-tracks-turkey' },
-  { id: 'PLFgquLnL59alcyTM2lkWJU34KtfPXQDaX', category: 'top-tracks' },
-  { id: 'PLFgquLnL59alkIbVx9idhCZ0oRQGV5C29', category: 'latest' },
+
+  { id: 'PLJhKEt4Hct7X5ox53HIqxCHRdhghj581o', category: 'top-100-itunes-us' },
+  { id: 'PLD7SPvDoEddZUrho5ynsBfaI7nqhaNN5c', category: 'hot-100-billboard' },
+  { id: 'PLywWGW4ILrvpqqkgKRV8jpZMaUPohQipP', category: 'top-100-official-uk' },
+  { id: 'PL4QNnZJr8sRNKjKzArmzTBAlNYBDN2h-J', category: 'top-k-pop' },
 ]
 const targetSelector = '#contents.ytmusic-playlist-shelf-renderer .ytmusic-playlist-shelf-renderer'
 

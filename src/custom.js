@@ -1,45 +1,38 @@
 import { Log, MongoDB/* , GetTargets, ApiServer */ } from './lib'
 
+// MongoDB.updateOne({ title: 'Trending' }, { $set: { title: 'U.S. Trending' } }, { w: 1 }, Log, { name: 'category' }) // */
+MongoDB.updateMany({ page: 'top-charts1' }, { $set: { page: 'top-charts' } }, { w: 1 }, (result) => {
+  Log(result)
+}, { name: 'category' })
+
 /*
 const categoryListJson = [
-  {
-    title:     'New',
-    thumbnail: 'https://lh3.googleusercontent.com/ecmsF5xu5mZv_wNK4lIyXYDssLnhDWScFo-FyXUbtUnb8wfsYxjfE5iASeK-dTzdDfEJr8cbLM8=w544-h544-l90-rj',
-    category:  'latest',
-    page: 'home',
-  },
-  {
-    title:     'Hot',
-    thumbnail: 'https://lh3.googleusercontent.com/ecmsF5xu5mZv_wNK4lIyXYDssLnhDWScFo-FyXUbtUnb8wfsYxjfE5iASeK-dTzdDfEJr8cbLM8=w544-h544-l90-rj',
-    category:  'top-tracks',
-    page: 'home',
-  },
   // latest/top-tracks
   {
-    title:     'Worldwide Top',
+    title:     'iTunes Top 100 (U.S.)',
     thumbnail: 'https://lh3.googleusercontent.com/q2W_j295X5-3TGaD4hDAoi60hOSEwIgVOkgP1XaQjdD_midOl_AUrwh5rt9HEPRCHNEQrT-VSA=s576',
-    category:  'top-100-world',
-    page: 'top-charts',
+    category:  'top-100-itunes-us',
+    page: 'top-charts1',
   },
   {
-    title:     'UnitedStatus Top',
-    thumbnail: 'https://lh3.googleusercontent.com/r9n7lePHjqZz_h-_YUOIqt60GCLLU0ULCClCJBzqlcdcSYhAiUNUAgD1qKq1imzLhzrKNay_x5Y=s576',
-    category:  'top-100-us',
-    page: 'top-charts',
+    title:     'Billboard Hot',
+    thumbnail: 'https://lh3.googleusercontent.com/q2W_j295X5-3TGaD4hDAoi60hOSEwIgVOkgP1XaQjdD_midOl_AUrwh5rt9HEPRCHNEQrT-VSA=s576',
+    category:  'hot-100-billboard',
+    page: 'top-charts1',
   },
   {
-    title:     'Turkey Top',
-    thumbnail: 'https://lh3.googleusercontent.com/ecmsF5xu5mZv_wNK4lIyXYDssLnhDWScFo-FyXUbtUnb8wfsYxjfE5iASeK-dTzdDfEJr8cbLM8=w544-h544-l90-rj',
-    category:  'top-tracks-turkey',
-    page: 'top-charts',
+    title:     'The Official UK Top',
+    thumbnail: 'https://lh3.googleusercontent.com/q2W_j295X5-3TGaD4hDAoi60hOSEwIgVOkgP1XaQjdD_midOl_AUrwh5rt9HEPRCHNEQrT-VSA=s576',
+    category:  'top-100-official-uk',
+    page: 'top-charts1',
   },
   {
-    title:     'Trending',
-    thumbnail: 'https://lh3.googleusercontent.com/1DG4Ft_LwkRjof9HeGClwkrVv7e2fy98KXVoP7aROUGl4vsKrOBtFopWdrz_oz4p6O7vQ1vUzQ=s576',
-    category:  'trending-20-us',
-    page: 'top-charts',
+    title:     'Top K-Pop Music',
+    thumbnail: 'https://lh3.googleusercontent.com/q2W_j295X5-3TGaD4hDAoi60hOSEwIgVOkgP1XaQjdD_midOl_AUrwh5rt9HEPRCHNEQrT-VSA=s576',
+    category:  'top-k-pop',
+    page: 'top-charts1',
   },
-  // top-100-world/top-100-us/top-tracks-turkey/trending-20-us
+  // top-100-world/top-100-us/top-tracks-turkey/trending-20-us/top-100-itunes-us/hot-100-billboard/top-100-official-uk/top-k-pop
 ]
 
 MongoDB.insertMany(categoryListJson, Log, { name: 'category' }) // */

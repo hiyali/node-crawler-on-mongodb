@@ -1,10 +1,15 @@
-# Puppeteer Crawler
+# Node Puppeteer Crawler
+
+> This is an example for NodeJS & Puppeteer Crawler on MongoDB with crawling playlists of youtube music
+Crawl all (ALMOST) songs' information of declared playlists in youtube music
+
+### Has features below (and more actually):
 
 * Nodejs + Puppeteer crawler
   * Simple queue
   * Perfect SPA crawling
   * Can crawl multiple sites
-    * - Just focus on one site
+    - Just focus on one site
 * Data management API
 * Mongo Saving
   * Simple DB Api
@@ -18,8 +23,9 @@
 
 ### 1. Start Mongodb service
 ```shell
-./src/sh/mongodb_serv.sh
+./src/sh/mongodb_serv.sh # not tested recently
 ```
+
 ### 2. Start crawling, server running on port 5556
 ```shell
 npm start
@@ -37,10 +43,16 @@ npm start
 /api/music/:id # (put) put one record status: 1, could use like this $set={"status":2} for other columns
 ```
 
+### 4. For daily jobs
+```shell
+./src/sh/crawl.sh # tested recently many times
+```
+
 ## dev
 
 target config folder src/targets-config/*
 
+(crawl/api/custom command was tested)
 ```shell
 npm run api # Just run API
 npm run crawl # Run targets
