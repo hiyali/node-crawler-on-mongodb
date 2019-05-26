@@ -160,7 +160,7 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
       if (postListSuccess) {
         await createMongoDBIndex(conf.createIndexOption)
 
-        if (results.length > 0) {
+        if (results.length > 0 && conf.updateThumb) {
           Log('Prepare to call updateCategoryData with:', JSON.stringify(results[0]))
           await updateCategoryData(results[0], postEndpoint.category)
             .catch(err => Log('Err - postCategoryResults: ', err))

@@ -1,6 +1,19 @@
 import { Log, MongoDB/* , GetTargets, ApiServer */ } from './lib'
 
-MongoDB.deleteOne({ page: 'home1' }, { w: 1 }, Log, { name: 'category' })
+/*
+const baseUrl = 'https://s3.us-east-2.amazonaws.com/music-of-pomm/cate/'
+
+MongoDB.find({ page: 'top-charts' }, (result) => {
+  result.forEach((item) => {
+    const imageUrl = baseUrl + item.category + '.jpg'
+    Log(imageUrl)
+    MongoDB.updateOne({ title: item.title }, { $set: { thumbnail: imageUrl } }, { w: 1 }, Log, { name: 'category' })
+  })
+  Log(result.length)
+}, { name: 'category' })
+// */
+
+// MongoDB.deleteOne({ page: 'home1' }, { w: 1 }, Log, { name: 'category' })
 // MongoDB.updateOne({ title: 'Trending' }, { $set: { title: 'U.S. Trending' } }, { w: 1 }, Log, { name: 'category' }) // */
 /*
 MongoDB.updateMany({ page: 'top-charts1' }, { $set: { page: 'top-charts' } }, { w: 1 }, (result) => {
