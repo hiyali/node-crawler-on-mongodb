@@ -14,7 +14,8 @@ const RunConf = {
     category: 'http://localhost:5556/api/category',
   },
   waitForTimeout: 20 * 1000,
-  RUN_ONCE: IS_DEV_MODE === true,
+  IS_DEV_MODE,
+  CRAWL_ONCE_ITEM: process.argv.indexOf('--crawl-once-item') > - 1,
   DONT_SAVE_DATA: process.argv.indexOf('--dont-save-data') > -1,
 }
 

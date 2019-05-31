@@ -110,7 +110,9 @@ const getSiteTarget = async (page, url, waitForSelector, waitForTimeout) => {
   return $
 }
 
-const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_ONCE, DONT_SAVE_DATA }) => {
+const Run = async ({ prepare, getConf, parseData }, { postEndpoint, waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
+  await prepare()
+
   // const { width, height } = localDevice.viewport
   const browser = await puppeteer.launch({
     headless: true,
@@ -124,9 +126,33 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
     // devices['Kindle Fire HDX landscape']
     devices['iPad Pro']
 
-  let conf = getConf()
+  let conf = 'first time'
   let retryTimes = 5
+  // let deadLoopTimes = 100
+
   while (conf) {
+    conf = getConf()
+    if (!conf) break
+
+    // deadLoopTimes--
+    // if (deadLoopTimes < 1) {
+    //   break
+    // }
+
+    if (conf.data.runMode === 'NEVER') {
+      continue
+    }
+
+    if (CRAWL_ONCE_ITEM) {
+      if (conf.data.runMode !== 'ONCE') {
+        continue
+      }
+    } else {
+      if (conf.data.runMode === 'ONCE') {
+        continue
+      }
+    }
+
     Log('Start crawl to category:', conf.dataMark.category)
 
     const page = await browser.newPage()
@@ -160,7 +186,7 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
       if (postListSuccess) {
         await createMongoDBIndex(conf.createIndexOption)
 
-        if (results.length > 0 && conf.updateThumb) {
+        if (results.length > 0 && conf.data.page !== 'top-charts') {
           Log('Prepare to call updateCategoryData with:', JSON.stringify(results[0]))
           await updateCategoryData(results[0], postEndpoint.category)
             .catch(err => Log('Err - postCategoryResults: ', err))
@@ -173,11 +199,9 @@ const Run = async ({ getConf, parseData }, { postEndpoint, waitForTimeout, RUN_O
     await page.close()
     Log('-'.repeat(66))
 
-    if (RUN_ONCE) {
+    if (IS_DEV_MODE) {
       break
     }
-
-    conf = getConf()
   }
 
   browser.close()

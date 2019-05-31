@@ -9,6 +9,7 @@
     "crawl:dev": "./node_modules/.bin/babel-node ./src/crawl.js --dev-mode",
     "custom": "./node_modules/.bin/babel-node ./src/custom.js",
     "example": "npm run ./node_modules/.bin/babel-node ./src/targets/example.back.js --dont-save-data",
+    "mongo:admin": "node ./node_modules/mongo-express/app.js",
     "start": "npm run crawl && npm run api",
     "test": "echo \"No tests!\"; exit 0 "
   },
@@ -28,6 +29,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
+    "mongo-express": "^0.52.2",
     "mongodb": "^2.2.36",
     "restify": "^4.3.0"
   },
