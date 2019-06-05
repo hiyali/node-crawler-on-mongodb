@@ -46,7 +46,7 @@ const getDateStepName = () => {
   if (crawlNumberArgIdx > -1 && process.argv.length > crawlNumberArgIdx + 1) {
     crawlNumber = process.argv[crawlNumberArgIdx + 1]
   } else {
-    Log('The crawlNumber was not given')
+    Log('The crawlNumber was not given, default is:', crawlNumber)
   }
   return `${year}${getTwoBits(month)}${getTwoBits(day)}_${crawlNumber}` // 20180309_1
 }

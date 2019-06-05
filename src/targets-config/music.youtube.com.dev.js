@@ -45,6 +45,8 @@ const getConf = () => {
 
 const parseData = async ($, dataMark = {}) => {
   const resultData = []
+  const invalItemPosList = []
+
   await $(targetSelector).each(function(index) {
     const thumbnail = $(this).find('.yt-img-shadow').attr('src').split('?')[0]
     const data = {
@@ -58,9 +60,11 @@ const parseData = async ($, dataMark = {}) => {
     if (thumbnail.indexOf('jpg') > -1 && strExist(data.videoId) && strExist(data.title)) {
       resultData.push({ ...data, ...dataMark })
     } else {
-      Log('The invalidated item position: ', index + 1)
+      invalItemPosList.push(index + 1)
     }
   })
+
+  Log('The invalidated items position list: ', invalItemPosList.join(', '))
   return resultData
 }
 
