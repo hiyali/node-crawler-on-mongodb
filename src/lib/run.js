@@ -110,7 +110,7 @@ const getSiteTarget = async (page, url, waitForSelector, waitForTimeout) => {
   return $
 }
 
-const Run = async ({ prepare, getConf, parseData }, { postEndpoint, waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
+const Run = async ({ prepare, getConf, parseData, getThumbnail }, { postEndpoint, waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
   await prepare()
 
   // const { width, height } = localDevice.viewport
@@ -128,10 +128,15 @@ const Run = async ({ prepare, getConf, parseData }, { postEndpoint, waitForTimeo
 
   let conf = 'first time'
   let retryTimes = 5
+  let retring = false
   // let deadLoopTimes = 100
 
   while (conf) {
-    conf = getConf()
+    if (retring) {
+      retring = false
+    } else {
+      conf = getConf()
+    }
     if (!conf) break
 
     // deadLoopTimes--
@@ -174,6 +179,7 @@ const Run = async ({ prepare, getConf, parseData }, { postEndpoint, waitForTimeo
     if ($target === 'retry' && retryTimes > 0) {
       Log('Run: retring... ', retryTimes)
       retryTimes--
+      retring = true
       continue // retry
     }
 
@@ -186,10 +192,13 @@ const Run = async ({ prepare, getConf, parseData }, { postEndpoint, waitForTimeo
       if (postListSuccess) {
         await createMongoDBIndex(conf.createIndexOption)
 
-        if (results.length > 0 && conf.data.page !== 'top-charts') {
-          Log('Prepare to call updateCategoryData with:', JSON.stringify(results[0]))
-          await updateCategoryData(results[0], postEndpoint.category)
-            .catch(err => Log('Err - postCategoryResults: ', err))
+        if (conf.data.page !== 'top-charts') {
+          const thumbnail = await getThumbnail($target).catch(err => Log('Err - postListResults: ', err))
+          if (thumbnail) {
+            Log('Prepare to call updateCategoryData with:', thumbnail)
+            await updateCategoryData({ thumbnail, category: conf.dataMark.category }, postEndpoint.category)
+              .catch(err => Log('Err - postCategoryResults: ', err))
+          }
         }
       }
     }

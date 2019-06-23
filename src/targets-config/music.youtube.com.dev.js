@@ -5,6 +5,7 @@ const siteUrl = 'music.youtube.com'
 const urlModel = 'https://music.youtube.com/playlist?list={LIST_ID}'
 let urlConfList = []
 const targetSelector = '#contents.ytmusic-playlist-shelf-renderer .ytmusic-playlist-shelf-renderer'
+const thumbnailSelector = '#header #img'
 
 const strExist = value => value && value.length > 0
 
@@ -12,8 +13,8 @@ const prepare = () => {
   return new Promise((resolve) => {
     MongoDB.findOne({ aim: 'crawler-conf' }, (result) => {
       urlConfList = result.data
-      Log(urlConfList[0])
-      Log(urlConfList.length)
+      Log(`prepare - Got ${urlConfList.length} records`)
+      // Log(`The first item.category is: ${urlConfList[0].category}`)
       resolve(true)
     }, { name: 'config' })
   })
@@ -68,8 +69,13 @@ const parseData = async ($, dataMark = {}) => {
   return resultData
 }
 
+const getThumbnail = async ($) => {
+  return await $(thumbnailSelector).attr('src')
+}
+
 export {
   prepare,
   getConf,
   parseData,
+  getThumbnail,
 }

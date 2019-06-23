@@ -132,7 +132,7 @@ const findOne = function (
       test.equal(err, null)
 
 			if (result) {
-				Log(`Found ${result.length} record`)
+				Log(`Found record with filter: ${JSON.stringify(query)}`)
 				// console.dir(result)
 				resultCB(result)
 			} else {
