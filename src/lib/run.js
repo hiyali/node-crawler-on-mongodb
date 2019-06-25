@@ -32,6 +32,9 @@ const getDateStepName = () => {
   const year = now.getFullYear()
   const month = now.getMonth() + 1
   const day = now.getDate()
+  const hour = now.getHours() + 1
+  const minute = now.getMinutes()
+  const second = now.getSeconds()
 
   const getTwoBits = (num) => {
     if (num >= 10) {
@@ -41,14 +44,7 @@ const getDateStepName = () => {
     }
   }
 
-  let crawlNumber = 1 // default is 1
-  const crawlNumberArgIdx = process.argv.indexOf('--crawl-number')
-  if (crawlNumberArgIdx > -1 && process.argv.length > crawlNumberArgIdx + 1) {
-    crawlNumber = process.argv[crawlNumberArgIdx + 1]
-  } else {
-    Log('The crawlNumber was not given, default is:', crawlNumber)
-  }
-  return `${year}${getTwoBits(month)}${getTwoBits(day)}_${crawlNumber}` // 20180309_1
+  return `${year}${getTwoBits(month)}${getTwoBits(day)}_${getTwoBits(hour)}${getTwoBits(minute)}${getTwoBits(second)}` // 20180309_170305
 }
 
 const createMongoDBIndex = (createIndexOption) => new Promise((resolve) => { // , reject
