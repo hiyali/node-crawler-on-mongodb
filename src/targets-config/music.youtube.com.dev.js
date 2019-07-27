@@ -11,12 +11,12 @@ const strExist = value => value && value.length > 0
 
 const prepare = () => {
   return new Promise((resolve) => {
-    MongoDB.findOne({ aim: 'crawler-conf' }, (result) => {
-      urlConfList = result.data
+    MongoDB.find({}, (results) => {
+      urlConfList = results
       Log(`prepare - Got ${urlConfList.length} records`)
       // Log(`The first item.category is: ${urlConfList[0].category}`)
       resolve(true)
-    }, { name: 'config' })
+    }, { name: 'category', limit: '0' })
   })
 }
 
@@ -26,7 +26,7 @@ const getConf = () => {
     return undefined
   }
 
-  const url = urlModel.replace('{LIST_ID}', urlConf.id)
+  const url = urlModel.replace('{LIST_ID}', urlConf.playlistId)
   return {
     url,
     data: urlConf,
@@ -54,7 +54,7 @@ const parseData = async ($, dataMark = {}) => {
       thumbnail,
       title: $(this).find('.title').text(),
       artist: $(this).find('.secondary-flex-columns yt-formatted-string:first-child').text().replace('\n', ''),
-      // time: $(this).find('> :last-child yt-formatted-string').text().replace('\n', ''), // do'nt appear in iPad...
+      // time: $(this).find('> :last-child yt-formatted-string').text().replace('\n', ''), // not appear in iPad...
       videoId: thumbnail ? thumbnail.split('/')[4] : '',
       sortNum: index + 1,
     }

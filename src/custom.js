@@ -1,6 +1,19 @@
 import { Log, MongoDB/* , GetTargets, ApiServer */ } from './lib'
 
 /*
+MongoDB.findOne({ aim: 'crawler-conf' }, (result) => {
+  result.data.forEach((item) => {
+    Log(item.id, item.category)
+    if (!item.runMode) {
+      MongoDB.updateOne({ category: item.category }, { $set: { playlistId: item.id } }, { w: 1 }, Log, { name: 'category' })
+    } else {
+      MongoDB.updateOne({ category: item.category }, { $set: { playlistId: item.id, runMode: item.runMode } }, { w: 1 }, Log, { name: 'category' })
+    }
+  })
+}, { name: 'config' })
+// */
+
+/*
 const baseUrl = 'https://s3.us-east-2.amazonaws.com/music-of-pomm/cate/'
 
 MongoDB.find({ page: 'top-charts' }, (result) => {
