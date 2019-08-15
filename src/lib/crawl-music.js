@@ -15,6 +15,11 @@ const localDevice = {
   userAgent: 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36',
 } // */
 
+const postEndpoint = {
+  list: 'http://localhost:5556/api/music',
+  category: 'http://localhost:5556/api/category',
+}
+
 const postListResults = (results, listEndpoint) => {
   return new Promise((resolve, reject) => {
     axios.post(listEndpoint, results).then(resolve).catch(reject)
@@ -106,7 +111,7 @@ const getSiteTarget = async (page, url, waitForSelector, waitForTimeout) => {
   return $
 }
 
-const Run = async ({ prepare, getConf, parseData, getThumbnail }, { postEndpoint, waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
+const CrawlMusic = async ({ prepare, getConf, parseData, getThumbnail }, { waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
   await prepare()
 
   // const { width, height } = localDevice.viewport
@@ -217,4 +222,4 @@ const Run = async ({ prepare, getConf, parseData, getThumbnail }, { postEndpoint
   browser.close()
 }
 
-export default Run
+export default CrawlMusic

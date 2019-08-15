@@ -1,5 +1,5 @@
 'use strict'
-import { Log, MongoDB } from '../lib'
+import { Log, MongoDB } from '../../lib'
 
 const siteUrl = 'music.youtube.com'
 const urlModel = 'https://music.youtube.com/playlist?list={LIST_ID}'
@@ -65,7 +65,7 @@ const parseData = async ($, dataMark = {}) => {
     }
   })
 
-  Log('The invalidated items position list: ', invalItemPosList.join(', '))
+  Log('The invalid items position list: ', invalItemPosList.join(', '))
   return resultData
 }
 

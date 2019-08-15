@@ -1,23 +1,28 @@
 'use strict'
 
-import { Run } from './lib'
+import { CrawlMusic, CrawlNews } from './lib'
 
 // Import targets
-import * as ytMusic from './targets-config/music.youtube.com.dev'
+// -- music
+import * as ytMusic from './rules/music/music.youtube.com'
+// -- news
+import * as sozcuComTr from './rules/news/sozcu.com.tr.dev'
 
 // Basic settings
-const RunConf = {
-  postEndpoint: {
-    list: 'http://localhost:5556/api/music',
-    category: 'http://localhost:5556/api/category',
-  },
+const CrawlConf = {
   waitForTimeout: 20 * 1000,
   IS_DEV_MODE: process.argv.indexOf('--dev-mode') > -1,
   CRAWL_ONCE_ITEM: process.argv.indexOf('--crawl-once-item') > - 1,
   DONT_SAVE_DATA: process.argv.indexOf('--dont-save-data') > -1,
 }
 
-// Run them
+// CrawlMusic them
 ;(async () => {
-  await Run(ytMusic, RunConf)
+  if (process.argv.indexOf('--crawl-music') > -1) {
+    await CrawlMusic(ytMusic, CrawlConf)
+  }
+
+  if (process.argv.indexOf('--crawl-news') > -1) {
+    await CrawlNews(sozcuComTr, CrawlConf)
+  }
 })()
