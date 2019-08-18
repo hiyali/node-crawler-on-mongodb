@@ -1,22 +1,23 @@
 'use strict'
 import { Log, MongoDB } from '../../lib'
 
+const strExist = value => value && value.length > 0
+
+let urlConfList = []
+
 const siteUrl = 'music.youtube.com'
 const urlModel = 'https://music.youtube.com/playlist?list={LIST_ID}'
-let urlConfList = []
 const targetSelector = '#contents.ytmusic-playlist-shelf-renderer .ytmusic-playlist-shelf-renderer'
 const thumbnailSelector = '#header #img'
 
-const strExist = value => value && value.length > 0
-
 const prepare = () => {
   return new Promise((resolve) => {
+    Log('prepare urlConfList')
     MongoDB.find({}, (results) => {
       urlConfList = results
-      Log(`prepare - Got ${urlConfList.length} records`)
       // Log(`The first item.category is: ${urlConfList[0].category}`)
       resolve(true)
-    }, { name: 'category', limit: '0' })
+    }, { name: 'category', limit: '0', dbName: 'youtubeMusic' })
   })
 }
 

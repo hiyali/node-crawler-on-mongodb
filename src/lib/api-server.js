@@ -28,7 +28,7 @@ server.get('/api/music/count', function (req, res, next) {
   MongoDB.count(query, (result) => {
     res.charSet('utf-8')
     res.send({ count: result })
-  })
+  }, { name: 'music', dbName: 'youtubeMusic' })
   return next()
 })
 server.get('/api/music', function (req, res, next) {
@@ -43,7 +43,7 @@ server.get('/api/music', function (req, res, next) {
   MongoDB.find(query, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  }, options) // just use skip, limit, sort, name
+  }, { ...options, ...{ name: 'music', dbName: 'youtubeMusic' }}) // just use skip, limit, sort, name
   return next()
 })
 server.get('/api/music/:id', function (req, res, next) {
@@ -52,7 +52,7 @@ server.get('/api/music/:id', function (req, res, next) {
   MongoDB.findOne({ _id: new ObjectId(id) }, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  })
+  }, { name: 'music', dbName: 'youtubeMusic' })
   return next()
 })
 
@@ -64,7 +64,7 @@ server.post('/api/music', function (req, res, next) {
     MongoDB.insertMany(bodyJson, (result) => {
       res.charSet('utf-8')
       res.send(result)
-    })
+    }, { name: 'music', dbName: 'youtubeMusic' })
   } else {
     res.send('Please send JSON list.')
   }
@@ -84,7 +84,7 @@ server.put('/api/music', function (req, res, next) {
   MongoDB.updateMany(bodyJson, { $set: setData }, { w: 1 }, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  })
+  }, { name: 'music', dbName: 'youtubeMusic' })
   // */
   return next()
 })
@@ -102,7 +102,7 @@ server.put('/api/music/:id', function (req, res, next) {
   MongoDB.updateOne({ _id: new ObjectId(id) }, { $set: setData }, { w: 1 }, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  })
+  }, { name: 'music', dbName: 'youtubeMusic' })
   // */
   return next()
 })
@@ -113,7 +113,7 @@ server.del('/api/music/:id', function (req, res, next) {
   MongoDB.deleteOne({ _id: new ObjectId(id) }, { w: 1 }, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  })
+  }, { name: 'music', dbName: 'youtubeMusic' })
   return next()
 })
 

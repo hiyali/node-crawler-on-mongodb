@@ -5,12 +5,13 @@ import { Log } from './index.js'
 // const Log = () => {} // Use this Log function logs will disappear
 
 // Connection URL
-const url = 'mongodb://localhost:27017/youtubeMusic'
+const urlPrefix = 'mongodb://localhost:27017/'
+const databaseName = 'youtubeMusic'
 const collectionName = 'music'
 
 // for Connected
-const MongoDo = (toDo) => {
-  MongoClient.connect(url, function (err, db) {
+const MongoDo = (toDo, { dbName } = { dbName: databaseName }) => {
+  MongoClient.connect(urlPrefix + dbName, function (err, db) {
     if (err) {
       Log(err)
       return
@@ -29,7 +30,7 @@ const MongoDo = (toDo) => {
 const insertMany = function (
   dataList = [],
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
     Log('Prepare to insert dataList', JSON.stringify(dataList), `to ${name}`)
@@ -46,7 +47,7 @@ const insertMany = function (
         test.equal(dataLength, result.result.n)
         test.equal(dataLength, result.ops.length)
 
-        Log(`Inserted ${dataLength} items into the ${name} collection`)
+        Log(`Inserted ${dataLength} items in ${name} of ${dbName}`)
       }
 
       resultCB(result)
@@ -54,13 +55,13 @@ const insertMany = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const insertOne = function (
   data = null,
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   test.ok(!!data && data !== '')
   Log('Prepare to insert data', JSON.stringify(data), `to ${name}`)
@@ -83,21 +84,22 @@ const insertOne = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const find = function (
-  query = {}, // { status: { $exists: true } }
+  query = {},
   resultCB = () => {},
-  { name, skip, limit, sort }
+  { name, skip, limit, sort, dbName },
 ) {
   const toDo = (db, doneCB) => {
+    dbName = dbName || databaseName
     name = name || collectionName
     skip = skip ? parseInt(skip) : 0
     limit = limit ? parseInt(limit) : 10
     sort = sort ? JSON.parse(sort) : {}
 
-    Log('Prepare to find the query:', JSON.stringify(query), `with ${JSON.stringify({ name, skip, limit, sort })}`)
+    Log('Prepare to find the query:', JSON.stringify(query), `with options ${JSON.stringify({ skip, limit, sort })}`, `in ${name} of ${dbName}`)
 
     const collection = db.collection(name)
     collection
@@ -116,16 +118,16 @@ const find = function (
       })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const findOne = function (
   query = {},
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
-    Log('Prepare to find the query:', JSON.stringify(query), `in ${name}`)
+    Log('Prepare to find the query:', JSON.stringify(query), `in ${name} of ${dbName}`)
 
     const collection = db.collection(name)
     collection.findOne(query, {}, function(err, result) {
@@ -143,13 +145,13 @@ const findOne = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const deleteMany = function (
   query = {},
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
     Log('Prepare to delete with query:', JSON.stringify(query), `in ${name}`)
@@ -158,38 +160,37 @@ const deleteMany = function (
     collection.deleteMany(query, { w: 1 }, function(err, result) {
       test.equal(err, null)
 
-      Log(`Deleted the following ${result.length} records`)
-      // console.dir(result)
+      Log(`Deleted the following ${result.length} records`, `in ${name} of ${dbName}`)
 
       resultCB(result)
       doneCB(result)
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const createIndex = function (
   fieldOrSpec = '' || {},
   resultCB = () => {},
   options = {},
-  name = collectionName
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
-    Log(`Prepare to create Index for ${JSON.stringify(fieldOrSpec)} with ${JSON.stringify(options)}`)
+    Log(`Prepare to create Index for ${JSON.stringify(fieldOrSpec)} with options ${JSON.stringify(options)}`)
 
     const collection = db.collection(name)
     collection.createIndex(fieldOrSpec, options, function(err, indexName) {
       test.equal(err, null)
 
-      Log(`Created Index for ${indexName} with`, JSON.stringify(options))
+      Log(`Created Index for ${indexName} with options`, JSON.stringify(options))
 
       resultCB(indexName)
       doneCB(indexName)
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const updateMany = function (
@@ -197,7 +198,7 @@ const updateMany = function (
   update = {},
   options = {},
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
     Log(`Prepare to updateMany with filter ${JSON.stringify(filter)} and`, JSON.stringify(update))
@@ -213,7 +214,7 @@ const updateMany = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const updateOne = function (
@@ -221,7 +222,7 @@ const updateOne = function (
   update = {},
   options = {},
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
     Log(`Prepare to updateOne with filter ${JSON.stringify(filter)} and`, JSON.stringify(update))
@@ -237,17 +238,17 @@ const updateOne = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const deleteOne = function (
   filter = {},
   options = {},
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
-    Log(`Prepare to deleteOne with filter ${JSON.stringify(filter)} options`, JSON.stringify(options))
+    Log(`Prepare to deleteOne with filter ${JSON.stringify(filter)} with options`, JSON.stringify(options))
 
     const collection = db.collection(name)
     collection.deleteOne(filter, options, function(err, result) {
@@ -260,13 +261,13 @@ const deleteOne = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 const count = function (
   query = {},
   resultCB = () => {},
-  { name } = { name: collectionName }
+  { name, dbName } = { name: collectionName, dbName: databaseName }
 ) {
   const toDo = (db, doneCB) => {
     Log(`Prepare to get count with query ${JSON.stringify(query)}`)
@@ -282,7 +283,7 @@ const count = function (
     })
   }
 
-  MongoDo(toDo)
+  MongoDo(toDo, { dbName })
 }
 
 export default {
@@ -291,8 +292,9 @@ export default {
   Do: MongoDo,
   version: '0.0.1',
 
-  url,
+  urlPrefix,
   collectionName,
+  databaseName,
   test,
 
   insertMany,

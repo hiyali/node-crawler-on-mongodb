@@ -4,7 +4,7 @@ import devices from 'puppeteer/DeviceDescriptors'
 import cheerio from 'cheerio'
 import axios from 'axios'
 
-import { Log, MongoDB } from './'
+import { Log } from './'
 
 const postEndpoint = {
   list: 'http://localhost:5556/api/news',
@@ -16,13 +16,6 @@ const postResults = (results, endpoint) => {
     axios.post(endpoint, results).then(resolve).catch(reject)
   })
 }
-
-const createMongoDBIndex = (createIndexOption) => new Promise((resolve) => { // , reject
-  MongoDB.createIndex(createIndexOption, (result) => {
-    Log('MongoDB result:', result)
-    resolve(result)
-  }, { unique: true, background: true })
-})
 
 const getSiteTarget = async (page, url, waitForSelector, waitForTimeout) => {
   await page.goto(url, { waitUntil: 'networkidle2' })
@@ -37,7 +30,7 @@ const getSiteTarget = async (page, url, waitForSelector, waitForTimeout) => {
   return $
 }
 
-const CrawlNews = async ({ prepare, getConf, parseListData, parseData }, { waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
+const CrawlNews = async ({ prepare, getConf, parseListData, parseData }, { WAIT_FOR_TIMEOUT, IS_DEV_MODE, DONT_SAVE_DATA/*, CRAWL_ONCE_ITEM*/ }) => {
   await prepare()
 
   const browser = await puppeteer.launch({
@@ -58,7 +51,7 @@ const CrawlNews = async ({ prepare, getConf, parseListData, parseData }, { waitF
     if (retring) {
       retring = false
     } else {
-      conf = getConf()
+      conf = await getConf()
     }
     if (!conf) break
 
@@ -76,24 +69,24 @@ const CrawlNews = async ({ prepare, getConf, parseListData, parseData }, { waitF
       continue
     }
 
-    if (CRAWL_ONCE_ITEM) {
-      if (conf.data.runMode !== 'ONCE') {
+    if (IS_DEV_MODE) {
+      if (conf.data.runMode !== 'DEBUG') {
         continue
       }
     } else {
-      if (conf.data.runMode === 'ONCE') {
+      if(conf.data.runMode === 'DEBUG') {
         continue
       }
     }
 
-    Log('Start crawl to category:', conf.dataMark.category)
+    Log('Crawl site name:', conf.data.name)
 
     const page = await browser.newPage()
     await page.emulate(device)
     await page.setCacheEnabled(false)
 
     Log('Prepare to open:', conf.url)
-    const $target = await getSiteTarget(page, conf.url, conf.waitForSelector.list, waitForTimeout)
+    const $target = await getSiteTarget(page, conf.url, conf.waitForSelector.list, WAIT_FOR_TIMEOUT)
       .catch(err => {
         Log('Err - getSiteTarget: ', err);
         (async () => {
@@ -115,15 +108,16 @@ const CrawlNews = async ({ prepare, getConf, parseListData, parseData }, { waitF
     // -- each item
     const results = []
     let i = 0
-    while(i < listResults.length) {
+    while (i < listResults.length) {
       const listItem = listResults[i]
 
-      const $target = await getSiteTarget(page, listItem.url, conf.waitForSelector.item, waitForTimeout)
+      const $target = await getSiteTarget(page, listItem.url, conf.waitForSelector.item, WAIT_FOR_TIMEOUT)
         .catch(err => { Log('Err - getSiteTarget: ', err) })
 
       const data = await parseData($target, { ...conf.dataMark, ...listItem })
       if (data) {
         results.push(data)
+        // testing
         console.log(data)
       }
 
@@ -135,10 +129,7 @@ const CrawlNews = async ({ prepare, getConf, parseListData, parseData }, { waitF
     }
 
     if (!DONT_SAVE_DATA) {
-      const postResultsSuccess = await postResults(results, postEndpoint.list).catch(err => Log('Err - postResults: ', err))
-      if (postResultsSuccess) {
-        await createMongoDBIndex(conf.createIndexOption)
-      }
+      await postResults(results, postEndpoint.list).catch(err => Log('Err - postResults: ', err))
     }
 
     await page.close()

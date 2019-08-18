@@ -56,7 +56,7 @@ const createMongoDBIndex = (createIndexOption) => new Promise((resolve) => { // 
   MongoDB.createIndex(createIndexOption, (result) => {
     Log('MongoDB result:', result)
     resolve(result)
-  }, { unique: true, background: true })
+  }, { unique: true, background: true }, { name: 'music', dbName: 'youtubeMusic' })
 })
 
 async function scrollPageToBottom(page, scrollStep = 250, scrollDelay = 100) {
@@ -111,7 +111,7 @@ const getSiteTarget = async (page, url, waitForSelector, waitForTimeout) => {
   return $
 }
 
-const CrawlMusic = async ({ prepare, getConf, parseData, getThumbnail }, { waitForTimeout, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
+const CrawlMusic = async ({ prepare, getConf, parseData, getThumbnail }, { WAIT_FOR_TIMEOUT, IS_DEV_MODE, DONT_SAVE_DATA, CRAWL_ONCE_ITEM }) => {
   await prepare()
 
   // const { width, height } = localDevice.viewport
@@ -173,7 +173,7 @@ const CrawlMusic = async ({ prepare, getConf, parseData, getThumbnail }, { waitF
     // await page.setViewport(localDevice.viewport)
 
     Log('Prepare to open:', conf.url)
-    const $target = await getSiteTarget(page, conf.url, conf.waitForSelector, waitForTimeout)
+    const $target = await getSiteTarget(page, conf.url, conf.waitForSelector, WAIT_FOR_TIMEOUT)
       .catch(err => {
         Log('Err - getSiteTarget: ', err);
         (async () => {

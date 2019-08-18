@@ -21,7 +21,7 @@ ApiServer.server.put('/api/category', function (req, res, next) {
   MongoDB.updateOne({ category }, { $set: setData }, { w: 1 }, (result) => {
     res.charSet('utf-8')
     res.send(result)
-  }, { name: 'category' })
+  }, { name: 'category', dbName: 'youtubeMusic' })
   // */
   return next()
 })
