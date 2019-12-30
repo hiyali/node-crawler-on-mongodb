@@ -30,7 +30,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
-    "mongo-express": "^0.52.2",
+    "mongo-express": "^0.54.0",
     "mongodb": "^2.2.36",
     "restify": "^4.3.0"
   },
